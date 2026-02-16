@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealTone Premium - Upgrade Your Experience</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-light: #334155;
+      --text: #e2e8f0;
+      --text-muted: #cbd5e1;
+      --border: #475569;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, var(--bg) 0%, #1a2847 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .header h1 {
+      font-size: 3em;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, #ec4899 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 1.25em;
+      color: var(--text-muted);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .pricing-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 30px;
+      position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(139, 92, 246, 0.1);
+    }
+
+    .pricing-card.featured {
+      transform: scale(1.05);
+      border-color: var(--primary);
+      box-shadow: 0 30px 60px rgba(139, 92, 246, 0.15);
+    }
+
+    .badge {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary) 0%, #ec4899 100%);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .plan-name {
+      font-size: 1.5em;
+      font-weight: 600;
+      margin-bottom: 10px;
+      margin-top: 15px;
+    }
+
+    .plan-description {
+      color: var(--text-muted);
+      font-size: 0.95em;
+      margin-bottom: 20px;
+    }
+
+    .price {
+      font-size: 2.5em;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 20px 0;
+    }
+
+    .price-period {
+      color: var(--text-muted);
+      font-size: 0.9em;
+    }
+
+    .features {
+      list-style: none;
+      margin: 30px 0;
+      flex-grow: 1;
+    }
+
+    .features li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.95em;
+    }
+
+    .features li:before {
+      content: '✓ ';
+      color: var(--success);
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .features li.disabled {
+      opacity: 0.5;
+    }
+
+    .features li.disabled:before {
+      content: '✕ ';
+      color: var(--danger);
+    }
+
+    .cta-button {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+    }
+
+    .cta-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .comparison {
+      margin-top: 80px;
+      padding: 40px;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 2px solid var(--border);
+    }
+
+    .comparison h2 {
+      font-size: 2em;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table th {
+      background: var(--surface-light);
+      font-weight: 600;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .feature-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .checkmark {
+      color: var(--success);
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .x-mark {
+      color: var(--danger);
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .faq {
+      margin-top: 80px;
+      padding: 40px;
+      background: var(--surface);
+      border-radius: 16px;
+      border: 2px solid var(--border);
+    }
+
+    .faq h2 {
+      font-size: 2em;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-question {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    .faq-answer {
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .free-tier-banner {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .free-tier-banner p {
+      margin: 0;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+
+      .comparison-table {
+        font-size: 0.9em;
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🎵 Unlock Premium HealTone</h1>
+      <p>Access 500+ frequencies, smart stacks, and advanced features</p>
+    </div>
+
+    <!-- Free Tier Info -->
+    <div class="free-tier-banner">
+      <p>✨ Currently using <strong>Free Tier</strong> - Experience 50+ frequencies and basic features</p>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="pricing-grid">
+      <!-- Free Plan -->
+      <div class="pricing-card">
+        <h3 class="plan-name">🎁 Free</h3>
+        <p class="plan-description">Start your healing journey</p>
+        <div class="price">$0<span class="price-period">/forever</span></div>
+        <ul class="features">
+          <li>50+ Basic Frequencies</li>
+          <li>5 Smart Stacks</li>
+          <li>Web Player</li>
+          <li>Session History</li>
+          <li class="disabled">Premium Frequencies</li>
+          <li class="disabled">Advanced Stacks</li>
+          <li class="disabled">Favorites & Sync</li>
+        </ul>
+        <button class="cta-button" disabled>Current Plan</button>
+      </div>
+
+      <!-- Weekly Plan -->
+      <div class="pricing-card">
+        <div class="badge">Popular</div>
+        <h3 class="plan-name">⭐ Weekly</h3>
+        <p class="plan-description">Premium access for a week</p>
+        <div class="price">$9.99<span class="price-period">/week</span></div>
+        <ul class="features">
+          <li>500+ All Frequencies</li>
+          <li>30+ Smart Stacks</li>
+          <li>Multi-frequency Baths</li>
+          <li>Favorites & Sync</li>
+          <li>Session Statistics</li>
+          <li>Music Integration</li>
+          <li>Priority Support</li>
+        </ul>
+        <button class="cta-button" onclick="upgradeToWeekly()">
+          Upgrade to Weekly
+        </button>
+      </div>
+
+      <!-- Lifetime Plan -->
+      <div class="pricing-card featured">
+        <div class="badge">Best Value</div>
+        <h3 class="plan-name">💎 Lifetime</h3>
+        <p class="plan-description">Unlimited access forever</p>
+        <div class="price">$99.99<span class="price-period">/one-time</span></div>
+        <ul class="features">
+          <li>500+ All Frequencies</li>
+          <li>30+ Smart Stacks</li>
+          <li>Multi-frequency Baths</li>
+          <li>Favorites & Sync</li>
+          <li>Session Statistics</li>
+          <li>Music Integration</li>
+          <li>Lifetime Priority Support</li>
+        </ul>
+        <button class="cta-button" onclick="upgradeToLifetime()">
+          Get Lifetime Access
+        </button>
+      </div>
+    </div>
+
+    <!-- Feature Comparison -->
+    <div class="comparison">
+      <h2>📊 Feature Comparison</h2>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Free</th>
+            <th>Weekly</th>
+            <th>Lifetime</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feature-name">Frequencies Available</td>
+            <td>50+ Basic</td>
+            <td class="checkmark">500+ All</td>
+            <td class="checkmark">500+ All</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Smart Stacks</td>
+            <td>5</td>
+            <td class="checkmark">30+</td>
+            <td class="checkmark">30+</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Frequency Baths</td>
+            <td class="x-mark">✕</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Multi-Frequency Layering</td>
+            <td class="x-mark">✕</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Favorites & Sync</td>
+            <td class="x-mark">✕</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Session History</td>
+            <td>30 days</td>
+            <td class="checkmark">Unlimited</td>
+            <td class="checkmark">Unlimited</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Music Integration</td>
+            <td class="x-mark">✕</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
+          </tr>
+          <tr>
+            <td class="feature-name">Export Sessions</td>
+            <td class="x-mark">✕</td>
+            <td class="checkmark">✓</td>
+            <td class="checkmark">✓</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq">
+      <h2>❓ Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">Can I cancel my subscription anytime?</div>
+        <div class="faq-answer">
+          Yes! Weekly subscriptions can be cancelled anytime. You'll have access until your billing period ends.
+          Lifetime purchases are one-time and cannot be refunded, but they never expire.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">What's the difference between Weekly and Lifetime?</div>
+        <div class="faq-answer">
+          Weekly gives you full access for 7 days and auto-renews unless cancelled. Lifetime is a one-time purchase that gives you permanent access to all features forever.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Can I sync my subscription across devices?</div>
+        <div class="faq-answer">
+          Yes! Your subscription syncs automatically when you sign in on the mobile app or web. It's tied to your account, not the device.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Is there a trial period?</div>
+        <div class="faq-answer">
+          You get 50+ frequencies and 5 smart stacks in the Free tier with no time limit. This is essentially a forever trial to experience HealTone.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">What payment methods do you accept?</div>
+        <div class="faq-answer">
+          We accept all major credit/debit cards (Visa, Mastercard, American Express) through Stripe. Payments are secure and encrypted.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Can I upgrade from Weekly to Lifetime?</div>
+        <div class="faq-answer">
+          Yes! If you upgrade from Weekly to Lifetime, we'll prorate your payment and credit any remaining time on your Weekly subscription.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../data/frequencies-library.js"></script>
+  <script src="../data/smart-stacks.js"></script>
+  <script src="../js/stripe-payment-service.js"></script>
+  <script src="../js/profile-service.js"></script>
+
+  <script>
+    // Initialize services
+    const supabaseUrl = 'https://your-project.supabase.co';
+    const supabaseKey = 'your-anonymous-key';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+
+    ProfileService.init(supabase);
+    StripePaymentService.init(stripeKey, supabase);
+
+    // Load current subscription status
+    async function loadSubscriptionStatus() {
+      const profile = await ProfileService.getProfile();
+      
+      if (profile) {
+        // Update UI based on current tier
+        if (profile.subscription_tier === 'lifetime') {
+          document.querySelector('[onclick="upgradeToLifetime()"]').textContent = 'Current Plan';
+          document.querySelector('[onclick="upgradeToLifetime()"]').disabled = true;
+        } else if (profile.subscription_tier === 'weekly') {
+          document.querySelector('[onclick="upgradeToWeekly()"]').textContent = 'Renew Weekly';
+        }
+      }
+    }
+
+    // Upgrade functions
+    async function upgradeToWeekly() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span>';
+
+      try {
+        // Replace with actual product ID
+        const success = await StripePaymentService.processPayment(
+          'price_1234567890',
+          'weekly'
+        );
+
+        if (!success) {
+          alert('❌ Payment failed. Please try again.');
+          btn.disabled = false;
+          btn.textContent = 'Upgrade to Weekly';
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('❌ Error processing payment. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Upgrade to Weekly';
+      }
+    }
+
+    async function upgradeToLifetime() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span>';
+
+      try {
+        // Replace with actual product ID
+        const success = await StripePaymentService.processPayment(
+          'price_0987654321',
+          'lifetime'
+        );
+
+        if (!success) {
+          alert('❌ Payment failed. Please try again.');
+          btn.disabled = false;
+          btn.textContent = 'Get Lifetime Access';
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('❌ Error processing payment. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Get Lifetime Access';
+      }
+    }
+
+    // Load on page load
+    window.addEventListener('load', () => {
+      loadSubscriptionStatus();
+    });
+  </script>
+</body>
+</html>

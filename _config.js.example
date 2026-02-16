@@ -1,0 +1,10 @@
+// _config.js.example
+// Copy this to _config.js and fill in your values for local development
+
+window.ENV = {
+  SUPABASE_URL: 'https://your-project.supabase.co',
+  SUPABASE_ANON_KEY: 'your-anon-key-here',
+  STRIPE_PUBLISHABLE_KEY: 'pk_live_your-key-here'
+};
+
+console.log('✅ Environment loaded');

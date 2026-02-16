@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - Tones by Aysa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #e0e7ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+            border-radius: 30px;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(168, 85, 247, 0.4);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 2rem;
+        }
+
+        .version {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(168, 85, 247, 0.5);
+        }
+
+        .download-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .file-info {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 3rem;
+        }
+
+        .features {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .features h3 {
+            color: #a855f7;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .features ul {
+            list-style: none;
+        }
+
+        .features li {
+            padding: 0.5rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .install-steps {
+            text-align: left;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .install-steps h4 {
+            color: #fbbf24;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .install-steps ol {
+            margin-left: 1.5rem;
+            color: #cbd5e1;
+        }
+
+        .install-steps li {
+            padding: 0.3rem 0;
+        }
+
+        .disclaimer {
+            font-size: 0.85rem;
+            color: #64748b;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            margin-top: 2rem;
+            color: #a855f7;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem; }
+            .download-btn { padding: 1rem 2rem; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/icon.png" alt="Tones by Aysa" class="logo" onerror="this.style.display='none'">
+        
+        <h1>Tones by Aysa</h1>
+        <p class="tagline">Frequency Wellness for Mind & Body</p>
+        
+        <span class="version">📱 Version 1.0 • Android</span>
+
+        <div>
+            <a href="Tones-by-Aysa-v1.0.apk" download class="download-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                Download for Android
+            </a>
+            <p class="file-info">APK File • ~88 MB</p>
+        </div>
+
+        <div class="features">
+            <h3>✨ What's Included:</h3>
+            <ul>
+                <li>500+ Healing Frequencies (Solfeggio, Binaural, Planetary)</li>
+                <li>Custom Sound Composer with 6-layer mixing</li>
+                <li>Manifestation Hub with Journal & Mood Tracking</li>
+                <li>Progressive Frequency Layering Technology</li>
+                <li>Offline Mode - Cache your favorites</li>
+                <li>Sleep Timer up to 8 hours</li>
+                <li>Dark Mode Interface</li>
+            </ul>
+        </div>
+
+        <div class="install-steps">
+            <h4>📲 Installation Steps:</h4>
+            <ol>
+                <li>Tap <strong>"Download for Android"</strong> above</li>
+                <li>If your browser shows a warning, tap <strong>"Download anyway"</strong> - this is normal for apps outside the Play Store</li>
+                <li>Open your <strong>Downloads</strong> folder (or tap the download notification)</li>
+                <li>Tap the <strong>Tones-by-Aysa-v1.0.apk</strong> file</li>
+                <li><strong>Important:</strong> You'll be asked to allow installation from this source:
+                    <ul style="margin-top: 0.5rem; margin-left: 1rem; font-size: 0.9rem;">
+                        <li>Tap <strong>"Settings"</strong> when prompted</li>
+                        <li>Toggle ON <strong>"Allow from this source"</strong></li>
+                        <li>Press back and tap <strong>"Install"</strong></li>
+                    </ul>
+                </li>
+                <li>If Google Play Protect shows a warning, tap <strong>"Install anyway"</strong> (the app is safe, just not from the Play Store yet)</li>
+                <li>Once installed, tap <strong>"Open"</strong> and enjoy! 🎵</li>
+            </ol>
+        </div>
+
+        <div class="install-steps" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+            <h4 style="color: #f87171;">⚠️ Troubleshooting:</h4>
+            <ul style="list-style: none; margin-left: 0;">
+                <li style="padding: 0.5rem 0;"><strong>"App not installed"</strong> - Make sure you have enough storage space (~100 MB)</li>
+                <li style="padding: 0.5rem 0;"><strong>"Install blocked"</strong> - Go to Settings → Security → Enable "Unknown sources" for your browser</li>
+                <li style="padding: 0.5rem 0;"><strong>"Parse error"</strong> - The download may be incomplete. Delete the file and download again</li>
+                <li style="padding: 0.5rem 0;"><strong>Can't find the file?</strong> - Check your browser's Downloads, or use a file manager app</li>
+            </ul>
+        </div>
+
+        <p class="disclaimer">
+            <strong>Wellness Disclaimer:</strong> Tones by Aysa is a wellness and mindfulness tool. 
+            It is not intended to diagnose, treat, cure, or prevent any medical condition. 
+            Consult a healthcare professional for medical advice.
+        </p>
+
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+</body>
+</html>

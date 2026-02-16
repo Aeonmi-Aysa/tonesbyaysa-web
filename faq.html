@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - HealTone™</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
+        .header { background: rgba(15, 12, 41, 0.9); padding: 1.5rem 2rem; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(168, 85, 247, 0.2); }
+        .nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 800; color: #a855f7; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 600; }
+        .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+        h1 { font-size: 3.5rem; margin-bottom: 2rem; text-align: center; }
+        .faq-item { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); margin-bottom: 1rem; border-radius: 16px; overflow: hidden; }
+        .faq-question { padding: 1.5rem 2rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1.1rem; }
+        .faq-question:hover { background: rgba(255, 255, 255, 0.05); }
+        .faq-answer { padding: 0 2rem 1.5rem; display: none; line-height: 1.8; }
+        .faq-item.active .faq-answer { display: block; }
+        .faq-icon { font-size: 1.5rem; transition: transform 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+        .category-title { font-size: 2rem; margin: 3rem 0 1.5rem; color: #a855f7; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">💜 HealTone™</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/app.html">App</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Frequently Asked Questions</h1>
+
+        <h2 class="category-title">Getting Started</h2>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                What is frequency healing?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Frequency healing uses specific sound frequencies to influence the body and mind. Research shows that different frequencies can affect brainwave patterns, reduce pain, improve sleep, and promote healing. Every frequency in HealTone™ is backed by scientific studies.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                How do I use HealTone™?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Simply put on headphones, browse our frequency library, and play the frequencies that match your needs. Each frequency includes information about its benefits and recommended duration. You can also create custom frequency baths by combining multiple frequencies.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Do I need special equipment?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                No! Just headphones or speakers. Some frequencies work better with headphones (like binaural beats), but most can be played through any audio device. The app works on phones, tablets, and computers.
+            </div>
+        </div>
+
+        <h2 class="category-title">Subscription & Pricing</h2>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                How does the free tier work?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Free users get 7 frequency plays to try the app. This lets you experience the power of frequency healing before deciding to upgrade. No credit card required for the free tier.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                What's the difference between Weekly and Lifetime?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Weekly is $2.99/week with unlimited access. Lifetime is $29.99 one-time payment for unlimited access forever. If you plan to use HealTone™ for more than 10 weeks, Lifetime is the better value.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Is there a money-back guarantee?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Yes! We offer a 30-day money-back guarantee. If you're not satisfied for any reason, email us at origin@aeonmi.ai and we'll refund you in full—no questions asked.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Can I cancel anytime?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Absolutely. Weekly subscriptions can be canceled anytime from your profile page. There are no long-term contracts or cancellation fees.
+            </div>
+        </div>
+
+        <h2 class="category-title">Using the App</h2>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                How long should I listen to frequencies?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Each frequency has a recommended duration (usually 5-30 minutes). Start with shorter sessions and increase as you get comfortable. Many users find 15-20 minutes per day effective.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                When will I see results?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Many users report immediate effects like relaxation or pain relief. For deeper benefits like improved sleep patterns or reduced anxiety, most people notice significant changes within 7-14 days of regular use.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Can I use multiple frequencies at once?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Yes! Our frequency bath feature lets you combine up to 4 frequencies simultaneously. We also offer pre-made frequency baths designed for specific purposes like deep sleep, focus, or healing.
+            </div>
+        </div>
+
+        <h2 class="category-title">Safety & Medical</h2>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Is frequency healing safe?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Yes, frequency healing is safe when used as directed. However, it's not a replacement for medical treatment. If you have a medical condition, consult your healthcare provider. People with epilepsy should avoid frequencies that could trigger seizures.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Can I use this with medical devices?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                If you have a pacemaker or other electronic medical device, consult your doctor before using frequency healing. In most cases, it's safe, but it's always better to check first.
+            </div>
+        </div>
+
+        <h2 class="category-title">Technical Support</h2>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                The app isn't loading. What do I do?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Try clearing your browser cache and reloading the page. Make sure you're using a modern browser (Chrome, Firefox, Safari, or Edge). If problems persist, contact us at origin@aeonmi.ai
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Can I use the app offline?
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                Currently, HealTone™ requires an internet connection. Offline mode is coming in a future update!
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 4rem 0; padding: 3rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 24px;">
+            <h2 style="margin-bottom: 1rem;">Still have questions?</h2>
+            <p style="margin-bottom: 2rem;">We're here to help!</p>
+            <a href="/contact.html" style="display: inline-block; padding: 1rem 3rem; background: linear-gradient(135deg, #a855f7, #ec4899); border-radius: 50px; color: white; text-decoration: none; font-weight: 700;">Contact Us</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

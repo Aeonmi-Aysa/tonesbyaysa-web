@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title and branding SVG for Tones by Aysa -->
+  <defs>
+    <style>
+      .tones-title {
+        font-family: 'Georgia', serif;
+        font-size: 120px;
+        font-weight: 700;
+        letter-spacing: 8px;
+        fill: #ffffff;
+      }
+      .aysa-subtitle {
+        font-family: 'Brush Script MT', cursive;
+        font-size: 60px;
+        font-weight: 400;
+        fill: #daa520;
+      }
+      .accent-line {
+        stroke: #daa520;
+        stroke-width: 3;
+        fill: none;
+      }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="600" fill="#0a0a14"/>
+  
+  <!-- Decorative top line -->
+  <line x1="100" y1="80" x2="700" y2="80" class="accent-line"/>
+  
+  <!-- Main title -->
+  <text x="400" y="240" text-anchor="middle" class="tones-title">TONES</text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="340" text-anchor="middle" class="aysa-subtitle">by Aysa</text>
+  
+  <!-- Decorative bottom line -->
+  <line x1="100" y1="380" x2="700" y2="380" class="accent-line"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="150" cy="480" r="20" fill="none" stroke="#daa520" stroke-width="2" opacity="0.6"/>
+  <circle cx="650" cy="480" r="20" fill="none" stroke="#daa520" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Center accent -->
+  <circle cx="400" cy="480" r="8" fill="#daa520" opacity="0.8"/>
+</svg>

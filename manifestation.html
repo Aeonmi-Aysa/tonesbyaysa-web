@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manifestation Hub - Tones by Aysa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/_config.js" defer></script>
+  
+  <style>
+    :root {
+      --bg-primary: #0a0a14;
+      --bg-secondary: #111827;
+      --bg-elevated: #020617;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+      --border-color: rgba(148, 163, 184, 0.4);
+      --accent: #fbbf24;
+      --accent-soft: rgba(251, 191, 36, 0.1);
+      --success: #4ade80;
+      --success-soft: rgba(74, 222, 128, 0.1);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    .manifestation-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin: 0 0 0.5rem 0;
+      background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .intention-section {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .intention-section h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .category-btn {
+      background: var(--bg-elevated);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .category-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .category-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .category-btn .emoji {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .category-btn .label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .intensity-slider {
+      margin-top: 1rem;
+    }
+
+    .intensity-value {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      margin-left: 1rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-elevated);
+      outline: none;
+      border-radius: 4px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: var(--bg-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .session-section {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .timer-display {
+      text-align: center;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 2rem 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .achievement-card {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      text-align: center;
+      border: 2px solid var(--border-color);
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    .achievement-card.unlocked {
+      opacity: 1;
+      border-color: var(--success);
+      background: var(--success-soft);
+    }
+
+    .achievement-card .icon {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .achievement-card .name {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .achievement-card .description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .nav-bar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .nav-bar a {
+      color: var(--text-primary);
+      text-decoration: none;
+      margin-right: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .nav-bar a:hover {
+      color: var(--accent);
+    }
+
+    .recommendations {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .recommendations h4 {
+      margin-top: 0;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .frequency-chip {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      margin: 0.25rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .frequency-chip:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <a href="app.html">← Back to Dashboard</a>
+    <a href="composer.html">Composer</a>
+    <a href="favorites.html">Favorites</a>
+    <a href="profile.html">Profile</a>
+  </div>
+
+  <div class="manifestation-container">
+    <div class="header">
+      <h1>✨ Manifestation Hub</h1>
+      <p>Set intentions, track progress, and manifest your desires</p>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-sessions">0</div>
+        <div class="stat-label">Sessions Completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-minutes">0</div>
+        <div class="stat-label">Minutes Practiced</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-streak">0</div>
+        <div class="stat-label">Day Streak 🔥</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-intentions">0</div>
+        <div class="stat-label">Intentions Set</div>
+      </div>
+    </div>
+
+    <!-- Current Intention -->
+    <div class="intention-section" id="intention-form">
+      <h2>🎯 Set Your Intention</h2>
+      
+      <div class="category-grid">
+        <div class="category-btn" data-category="abundance">
+          <div class="emoji">💰</div>
+          <div class="label">Abundance</div>
+        </div>
+        <div class="category-btn" data-category="love">
+          <div class="emoji">❤️</div>
+          <div class="label">Love</div>
+        </div>
+        <div class="category-btn" data-category="health">
+          <div class="emoji">🌿</div>
+          <div class="label">Wellness</div>
+        </div>
+        <div class="category-btn" data-category="career">
+          <div class="emoji">🎯</div>
+          <div class="label">Career</div>
+        </div>
+        <div class="category-btn" data-category="spiritual">
+          <div class="emoji">🧘</div>
+          <div class="label">Spiritual</div>
+        </div>
+        <div class="category-btn" data-category="creativity">
+          <div class="emoji">🎨</div>
+          <div class="label">Creative</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Intention Title</label>
+        <input type="text" id="intention-title" placeholder="e.g., Attract my dream job">
+      </div>
+
+      <div class="form-group">
+        <label>Describe Your Intention</label>
+        <textarea id="intention-description" placeholder="Be specific about what you want to manifest..."></textarea>
+      </div>
+
+      <div class="form-group intensity-slider">
+        <label>Intention Intensity <span class="intensity-value" id="intensity-display">5</span></label>
+        <input type="range" id="intention-intensity" min="1" max="10" value="5">
+      </div>
+
+      <div class="recommendations" id="recommendations" style="display: none;">
+        <h4>Recommended Frequencies for This Category:</h4>
+        <div id="recommended-frequencies"></div>
+      </div>
+
+      <button class="btn" onclick="saveIntention()">Set Intention & Start Session</button>
+    </div>
+
+    <!-- Session Timer -->
+    <div class="session-section" id="session-area" style="display: none;">
+      <h2>🧘 Active Manifestation Session</h2>
+      
+      <div id="current-intention-display"></div>
+      
+      <div class="timer-display" id="timer">00:00</div>
+      
+      <div class="session-controls">
+        <button class="btn" id="pause-btn" onclick="togglePause()">⏸️ Pause</button>
+        <button class="btn btn-secondary" onclick="endSession()">✓ Complete Session</button>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="intention-section">
+      <h2>🏆 Achievements</h2>
+      <div class="achievement-grid" id="achievements">
+        <!-- Achievements will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script src="js/manifestation-engine.js"></script>
+</body>
+</html>

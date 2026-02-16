@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - HealTone™</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="/_config.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #e0e7ff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(15, 12, 41, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #4c1d95;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #a855f7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #e0e7ff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #a855f7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .profile-hero {
+            background: rgba(76, 29, 149, 0.3);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .avatar-section {
+            position: relative;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background: #a855f7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-info h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-email {
+            color: #a855f7;
+            margin-bottom: 1rem;
+        }
+
+        .subscription-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .subscription-badge.free {
+            background: linear-gradient(135deg, #6b7280, #9ca3af);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(76, 29, 149, 0.3);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #cbd5e1;
+            font-size: 1rem;
+        }
+
+        .section {
+            background: rgba(76, 29, 149, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #a855f7;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .usage-meter {
+            background: rgba(255, 255, 255, 0.1);
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .usage-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement {
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .achievement.unlocked {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.5;
+        }
+
+        .achievement.unlocked .achievement-icon {
+            opacity: 1;
+        }
+
+        .achievement-name {
+            font-weight: 700;
+            color: #d4af37;
+            margin-bottom: 0.25rem;
+        }
+
+        .subscription-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: #a855f7;
+        }
+
+        .pricing-card.current {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.1);
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .profile-hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">💜 HealTone™</div>
+        <nav class="nav-links">
+            <a href="app.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="signOut()">Sign Out</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="alertBox" class="alert"></div>
+
+        <div class="profile-hero">
+            <div class="avatar-section">
+                <div class="avatar" id="userAvatar">👤</div>
+                <div class="avatar-upload" onclick="triggerAvatarUpload()">📷</div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
+            </div>
+            <div class="user-info">
+                <h1 id="userName">Loading...</h1>
+                <div class="user-email" id="userEmail">email@example.com</div>
+                <span class="subscription-badge" id="subscriptionBadge">FREE TIER</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalSessions">0</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalMinutes">0</div>
+                <div class="stat-label">Minutes Healed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="currentStreak">0</div>
+                <div class="stat-label">Day Streak 🔥</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="frequenciesUsed">0</div>
+                <div class="stat-label">Frequencies Used</div>
+            </div>
+        </div>
+
+        <!-- Free Tier Usage -->
+        <div class="section" id="freeUsageSection" style="display: none;">
+            <h2 class="section-title">Free Tier Usage</h2>
+            <p>
+                Start with <strong id="remainingUses">7</strong> complimentary plays to feel how HealTone™ works.
+                Your sessions, streak, and favorites are saved even on the free tier.
+            </p>
+            <div class="usage-meter">
+                <div class="usage-fill" id="usageFill" style="width: 0%">
+                    <span id="usageText">0/7 used</span>
+                </div>
+            </div>
+            <p style="margin-top: 1rem; color: #cbd5e1;">
+                When you are ready, upgrade to unlock the full library and unlimited healing baths.
+            </p>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="section">
+            <h2 class="section-title">Account Settings</h2>
+            <form onsubmit="updateProfile(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="profileName" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="profileEmail" disabled>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Subscription Management -->
+        <div class="section">
+            <h2 class="section-title">Subscription</h2>
+            <div id="currentSubscription">
+                <!-- Dynamically populated -->
+            </div>
+            
+            <div class="subscription-options" id="upgradeOptions" style="display: none;">
+                <div class="pricing-card" id="weeklyCard">
+                    <div class="plan-name">Weekly</div>
+                    <div class="plan-price">$4.99<span style="font-size: 1rem;">/week</span></div>
+                    <ul style="list-style: none; margin: 1rem 0; text-align: left;">
+                        <li>✓ Unlimited frequency plays</li>
+                        <li>✓ Access to all healing baths</li>
+                        <li>✓ Full progress tracking & streaks</li>
+                        <li>✓ Cancel anytime in the billing portal</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="upgradeSubscription('weekly')">Start Weekly Access</button>
+                </div>
+
+                <div class="pricing-card" id="lifetimeCard">
+                    <div class="plan-name">Lifetime</div>
+                    <div class="plan-price">$69.99<span style="font-size: 1rem;"> one-time</span></div>
+                    <ul style="list-style: none; margin: 1rem 0; text-align: left;">
+                        <li>✓ Everything in Weekly, forever</li>
+                        <li>✓ Pay once, lock in access</li>
+                        <li>✓ All future updates and new baths</li>
+                        <li>✓ Priority support for your account</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="upgradeSubscription('lifetime')">Get Lifetime Access</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="section">
+            <h2 class="section-title">Achievements</h2>
+            <div class="achievements" id="achievementsList">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="section">
+            <h2 class="section-title" style="color: #ef4444;">Danger Zone</h2>
+            <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+            <p style="margin-top: 1rem; color: #cbd5e1; font-size: 0.9rem;">This action cannot be undone.</p>
+        </div>
+    </div>
+
+    <script>
+        // Load from environment variables (injected by build system)
+        const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'https://your-project.supabase.co';
+        const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'your-anon-key-here';
+        const STRIPE_KEY = window.ENV?.STRIPE_PUBLISHABLE_KEY || 'pk_test_your_test_key_here';
+        const BILLING_DEBUG = true; // surface backend errors in UI during testing
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const stripe = Stripe(STRIPE_KEY);
+        const AVATAR_BUCKET = 'avatars';
+        const MAX_AVATAR_SIZE = 4 * 1024 * 1024; // 4MB
+
+        let currentUser = null;
+        let currentProfile = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const avatarInput = document.getElementById('avatarInput');
+            if (avatarInput) {
+                avatarInput.addEventListener('change', handleAvatarFile);
+            }
+        });
+
+        async function loadProfile() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = session.user;
+
+            // Load user data
+            document.getElementById('userName').textContent = currentUser.user_metadata.full_name || 'User';
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('profileEmail').value = currentUser.email;
+            document.getElementById('profileName').value = currentUser.user_metadata.full_name || '';
+            updateAvatarDisplay(currentUser.user_metadata.avatar_url);
+
+            // Load profile from database
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (profile) {
+                currentProfile = profile;
+                if (profile.full_name) {
+                    document.getElementById('userName').textContent = profile.full_name;
+                    document.getElementById('profileName').value = profile.full_name;
+                }
+                updateAvatarDisplay(profile.avatar_url || currentUser.user_metadata.avatar_url);
+                const tier = profile.subscription_tier || 'free';
+                const badge = document.getElementById('subscriptionBadge');
+                
+                if (tier === 'lifetime') {
+                    badge.textContent = '💎 LIFETIME';
+                    badge.classList.remove('free');
+                } else if (tier === 'weekly') {
+                    badge.textContent = '⚡ WEEKLY';
+                    badge.classList.remove('free');
+                } else {
+                    badge.textContent = '🆓 FREE TIER';
+                    badge.classList.add('free');
+                    document.getElementById('freeUsageSection').style.display = 'block';
+                    document.getElementById('upgradeOptions').style.display = 'grid';
+                }
+
+                // Show current subscription
+                updateSubscriptionDisplay(tier, profile);
+            }
+
+            // Load stats
+            const { data: stats } = await supabase
+                .from('user_progress')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .single();
+
+            if (stats) {
+                document.getElementById('totalSessions').textContent = stats.total_sessions || 0;
+                document.getElementById('totalMinutes').textContent = stats.total_minutes || 0;
+                document.getElementById('currentStreak').textContent = stats.current_streak || 0;
+                document.getElementById('frequenciesUsed').textContent = stats.frequencies_tried || 0;
+
+                // Update usage meter for free users
+                if (profile && profile.subscription_tier === 'free') {
+                    const used = stats.total_sessions || 0;
+                    const remaining = Math.max(0, 7 - used);
+                    const percentage = (used / 7) * 100;
+                    
+                    document.getElementById('remainingUses').textContent = remaining;
+                    document.getElementById('usageFill').style.width = `${percentage}%`;
+                    document.getElementById('usageText').textContent = `${used}/7 used`;
+                }
+            }
+
+            loadAchievements(stats);
+        }
+
+        function updateSubscriptionDisplay(tier, profile) {
+            const container = document.getElementById('currentSubscription');
+            
+            if (tier === 'free') {
+                container.innerHTML = `
+                    <p>You're currently on the <strong>Free Tier</strong>.</p>
+                    <p style="margin-top: 0.5rem;">
+                        Explore a curated set of frequencies with 7 complimentary plays.
+                        Your streaks, stats, and saved baths will carry with you if you decide to upgrade.
+                    </p>
+                `;
+            } else if (tier === 'weekly') {
+                container.innerHTML = `
+                    <p>You have <strong>Weekly Access</strong> - $4.99/week</p>
+                    <p style="margin-top: 0.5rem;">Status: ${profile.subscription_status}</p>
+                    <p style="margin-top: 0.5rem;">
+                        Unlimited plays, full library access, and ongoing tracking for your healing practice.
+                    </p>
+                    <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="manageSubscription()">Manage Subscription</button>
+                    <button class="btn btn-primary" style="margin-top: 1rem; margin-left: 1rem;" onclick="upgradeSubscription('lifetime')">Upgrade to Lifetime</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <p>🎉 You have <strong>Lifetime Access</strong>! </p>
+                    <p style="margin-top: 0.5rem;">
+                        Thank you for your support. You have permanent access to the full library,
+                        all current and future baths, and priority support for your account.
+                    </p>
+                `;
+            }
+        }
+
+        function loadAchievements(stats) {
+            const achievements = [
+                { id: 'first', icon: '🎵', name: 'First Session', unlocked: stats && stats.total_sessions >= 1 },
+                { id: 'week', icon: '🔥', name: 'Week Streak', unlocked: stats && stats.current_streak >= 7 },
+                { id: 'hour', icon: '⏰', name: 'Hour Master', unlocked: stats && stats.total_minutes >= 60 },
+                { id: 'explorer', icon: '🌟', name: 'Explorer', unlocked: stats && stats.frequencies_tried >= 10 },
+                { id: 'dedicated', icon: '💪', name: 'Dedicated', unlocked: stats && stats.total_sessions >= 50 },
+                { id: 'master', icon: '👑', name: 'Master', unlocked: stats && stats.total_sessions >= 100 }
+            ];
+
+            document.getElementById('achievementsList').innerHTML = achievements.map(a => `
+                <div class="achievement ${a.unlocked ? 'unlocked' : ''}">
+                    <div class="achievement-icon">${a.icon}</div>
+                    <div class="achievement-name">${a.name}</div>
+                </div>
+            `).join('');
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+            const name = document.getElementById('profileName').value;
+
+            try {
+                const { error } = await supabase.auth.updateUser({
+                    data: { full_name: name }
+                });
+
+                if (error) throw error;
+
+                showAlert('Profile updated successfully!');
+                document.getElementById('userName').textContent = name;
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        const RAILWAY_API_BASE = 'https://healtone-backend-production.up.railway.app';
+
+        async function upgradeSubscription(plan) {
+            if (!currentUser) {
+                showAlert('Please sign in again before upgrading.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${RAILWAY_API_BASE}/create-checkout-session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        plan,
+                        userId: currentUser.id,
+                        email: currentUser.email
+                    })
+                });
+
+                const rawText = await response.text();
+                let payload = null;
+                try {
+                    payload = rawText ? JSON.parse(rawText) : null;
+                } catch (_) {
+                    payload = null;
+                }
+
+                if (!response.ok) {
+                    const backendMessage = payload && (payload.error || payload.message);
+                    const msg = backendMessage || `Checkout failed with status ${response.status}.`;
+                    if (BILLING_DEBUG) {
+                        console.error('Checkout error response:', { status: response.status, body: rawText });
+                    }
+                    throw new Error(msg);
+                }
+
+                const url = payload && payload.url;
+                if (!url) {
+                    if (BILLING_DEBUG) {
+                        console.error('Checkout payload missing url:', payload);
+                    }
+                    throw new Error('Checkout session missing redirect URL.');
+                }
+                window.location.href = url;
+            } catch (error) {
+                showAlert(error.message || 'Checkout failed. Please try again.', 'error');
+            }
+        }
+
+        async function manageSubscription() {
+            if (!currentUser) {
+                showAlert('Please sign in again before managing your subscription.', 'error');
+                return;
+            }
+
+            try {
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('stripe_customer_id')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (error) {
+                    throw error;
+                }
+                if (!profile || !profile.stripe_customer_id) {
+                    throw new Error('No billing profile found. Try opening checkout first.');
+                }
+                const response = await fetch(`${RAILWAY_API_BASE}/create-portal-session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customerId: profile.stripe_customer_id })
+                });
+
+                const rawText = await response.text();
+                let payload = null;
+                try {
+                    payload = rawText ? JSON.parse(rawText) : null;
+                } catch (_) {
+                    payload = null;
+                }
+
+                if (!response.ok) {
+                    const backendMessage = payload && (payload.error || payload.message);
+                    const msg = backendMessage || `Billing portal failed with status ${response.status}.`;
+                    if (BILLING_DEBUG) {
+                        console.error('Portal error response:', { status: response.status, body: rawText });
+                    }
+                    throw new Error(msg);
+                }
+
+                const url = payload && payload.url;
+                if (!url) {
+                    if (BILLING_DEBUG) {
+                        console.error('Portal payload missing url:', payload);
+                    }
+                    throw new Error('Billing portal URL missing.');
+                }
+                window.location.href = url;
+            } catch (error) {
+                showAlert(error.message || 'Unable to open billing portal.', 'error');
+            }
+        }
+
+        async function deleteAccount() {
+            if (!confirm('Are you sure? This will permanently delete your account and all data.')) return;
+            if (!confirm('This cannot be undone. Are you absolutely sure?')) return;
+
+            try {
+                // Delete user data from database
+                await supabase.from('profiles').delete().eq('id', currentUser.id);
+                
+                // Sign out
+                await supabase.auth.signOut();
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function signOut() {
+            try {
+                if (window.HealToneAuth?.signOut) {
+                    await window.HealToneAuth.signOut();
+                } else if (window.supabase?.auth?.signOut) {
+                    await window.supabase.auth.signOut();
+                } else if (window.supabaseClient?.auth?.signOut) {
+                    await window.supabaseClient.auth.signOut();
+                } else {
+                    console.warn('signOut: no auth client available');
+                }
+            } catch (err) {
+                console.error('signOut failed:', err);
+                alert('Sign out failed. Please try again.');
+                return;
+            }
+            window.location.href = 'login.html';
+        }
+
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alertBox');
+            const variantClass = type === 'error' ? 'alert-error' : type === 'info' ? 'alert-info' : 'alert-success';
+            alert.className = `alert ${variantClass} show`;
+            alert.textContent = message;
+            setTimeout(() => alert.classList.remove('show'), 3500);
+        }
+
+        function triggerAvatarUpload() {
+            if (!currentUser) {
+                showAlert('Please sign in again before uploading an avatar.', 'error');
+                return;
+            }
+            const input = document.getElementById('avatarInput');
+            if (input) {
+                input.click();
+            }
+        }
+
+        async function handleAvatarFile(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            await uploadAvatar(file);
+            event.target.value = '';
+        }
+
+        async function uploadAvatar(file) {
+            if (!currentUser) {
+                showAlert('Please sign in again before uploading an avatar.', 'error');
+                return;
+            }
+
+            if (file.size > MAX_AVATAR_SIZE) {
+                showAlert('Avatar must be 4MB or smaller.', 'error');
+                return;
+            }
+
+            showAlert('Uploading avatar...', 'info');
+
+            const extension = file.name.split('.').pop() || 'jpg';
+            const fileName = `${currentUser.id}/${Date.now()}.${extension.toLowerCase()}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from(AVATAR_BUCKET)
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true,
+                    contentType: file.type
+                });
+
+            if (uploadError) {
+                const missingBucket = uploadError.message && uploadError.message.toLowerCase().includes('bucket');
+                const hint = missingBucket
+                    ? 'Create a public "avatars" bucket in Supabase Storage and try again.'
+                    : uploadError.message;
+                showAlert(`Avatar upload failed: ${hint}`, 'error');
+                return;
+            }
+
+            const { data } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(fileName);
+            const publicUrl = data?.publicUrl;
+
+            if (!publicUrl) {
+                showAlert('Upload succeeded but no avatar URL was returned.', 'error');
+                return;
+            }
+
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({ avatar_url: publicUrl })
+                .eq('id', currentUser.id);
+
+            if (profileError) {
+                showAlert(`Avatar saved but profile update failed: ${profileError.message}`, 'error');
+                return;
+            }
+
+            await supabase.auth.updateUser({ data: { avatar_url: publicUrl } });
+            currentUser = {
+                ...currentUser,
+                user_metadata: {
+                    ...currentUser.user_metadata,
+                    avatar_url: publicUrl
+                }
+            };
+            updateAvatarDisplay(publicUrl);
+            showAlert('Avatar updated successfully!');
+        }
+
+        function updateAvatarDisplay(url) {
+            const avatarEl = document.getElementById('userAvatar');
+            if (!avatarEl) return;
+
+            if (url) {
+                avatarEl.style.backgroundImage = `url('${url}')`;
+                avatarEl.textContent = '';
+            } else {
+                avatarEl.style.backgroundImage = 'none';
+                const fallback = (currentUser?.user_metadata?.full_name || currentUser?.email || 'U').charAt(0).toUpperCase();
+                avatarEl.textContent = fallback;
+            }
+        }
+
+        window.addEventListener('load', loadProfile);
+    </script>
+</body>
+</html>

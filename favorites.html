@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Favorites - Tones by Aysa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/styles.css" />
+  
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/_config.js" defer></script>
+  
+  <style>
+    :root {
+      --bg-primary: #0a0a14;
+      --bg-secondary: #111827;
+      --bg-elevated: #020617;
+      --text-primary: #e5e7eb;
+      --text-secondary: #9ca3af;
+      --border-color: rgba(148, 163, 184, 0.4);
+      --accent: #fbbf24;
+      --accent-soft: rgba(251, 191, 36, 0.1);
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin: 0 0 0.5rem 0;
+      background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .tab {
+      padding: 1rem 2rem;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .item-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .item-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .item-meta {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-icon {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .nav-bar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .nav-bar a {
+      color: var(--text-primary);
+      text-decoration: none;
+      margin-right: 1.5rem;
+      transition: color 0.2s;
+    }
+
+    .nav-bar a:hover {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <a href="app.html">← Back to Dashboard</a>
+    <a href="manifestation.html">Manifestation</a>
+    <a href="composer.html">Composer</a>
+    <a href="profile.html">Profile</a>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1>💜 My Favorites</h1>
+      <p>Your saved frequencies, baths, and custom creations</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('frequencies')">Frequencies</button>
+      <button class="tab" onclick="switchTab('baths')">Frequency Baths</button>
+      <button class="tab" onclick="switchTab('custom')">Custom Baths</button>
+    </div>
+
+    <!-- Frequencies Tab -->
+    <div class="tab-content active" id="frequencies-tab">
+      <div class="items-grid" id="frequencies-list"></div>
+    </div>
+
+    <!-- Baths Tab -->
+    <div class="tab-content" id="baths-tab">
+      <div class="items-grid" id="baths-list"></div>
+    </div>
+
+    <!-- Custom Baths Tab -->
+    <div class="tab-content" id="custom-tab">
+      <div class="items-grid" id="custom-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentTab = 'frequencies';
+    let favorites = { frequencies: [], baths: [], custom: [] };
+    let supabase = null;
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initSupabase();
+      await loadFavorites();
+      renderCurrentTab();
+    });
+
+    async function initSupabase() {
+      if (!window.ENV) return;
+      
+      const SUPABASE_URL = window.ENV?.SUPABASE_URL;
+      const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY;
+      
+      if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+    }
+
+    async function loadFavorites() {
+      // Load from localStorage first
+      const localFavorites = localStorage.getItem('favorites');
+      if (localFavorites) {
+        favorites = JSON.parse(localFavorites);
+      }
+
+      // Try to sync with Supabase
+      if (supabase) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { data, error } = await supabase
+              .from('favorites')
+              .select('*')
+              .eq('user_id', user.id);
+            
+            if (data && !error) {
+              // Merge with local favorites
+              data.forEach(fav => {
+                const type = fav.item_type === 'frequency' ? 'frequencies' : 
+                           fav.item_type === 'bath' ? 'baths' : 'custom';
+                if (!favorites[type].includes(fav.item_id)) {
+                  favorites[type].push(fav.item_id);
+                }
+              });
+              localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+          }
+        } catch (error) {
+          console.log('Supabase sync failed (offline mode)');
+        }
+      }
+
+      renderCurrentTab();
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(`${tab}-tab`).classList.add('active');
+      
+      renderCurrentTab();
+    }
+
+    function renderCurrentTab() {
+      if (currentTab === 'frequencies') {
+        renderFrequencies();
+      } else if (currentTab === 'baths') {
+        renderBaths();
+      } else {
+        renderCustom();
+      }
+    }
+
+    function renderFrequencies() {
+      const list = document.getElementById('frequencies-list');
+      
+      if (favorites.frequencies.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🎵</div>
+            <h3>No favorite frequencies yet</h3>
+            <p>Go to the Dashboard and tap the heart icon on any frequency to save it here</p>
+          </div>
+        `;
+        return;
+      }
+
+      // For now, show placeholder data
+      list.innerHTML = favorites.frequencies.map((id, index) => `
+        <div class="item-card">
+          <div class="item-header">
+            <div>
+              <div class="item-title">Frequency ${id}</div>
+              <div class="item-meta">528Hz · Solfeggio</div>
+            </div>
+            <div class="item-actions">
+              <button class="btn-icon" onclick="playItem('frequency', '${id}')" title="Play">▶️</button>
+              <button class="btn-icon" onclick="removeFavorite('frequencies', '${id}')" title="Remove">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderBaths() {
+      const list = document.getElementById('baths-list');
+      
+      if (favorites.baths.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🛁</div>
+            <h3>No favorite baths yet</h3>
+            <p>Go to the Dashboard and save your favorite frequency baths here</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = favorites.baths.map(id => `
+        <div class="item-card">
+          <div class="item-header">
+            <div>
+              <div class="item-title">Bath ${id}</div>
+              <div class="item-meta">Wellness · 20 min</div>
+            </div>
+            <div class="item-actions">
+              <button class="btn-icon" onclick="playItem('bath', '${id}')" title="Play">▶️</button>
+              <button class="btn-icon" onclick="removeFavorite('baths', '${id}')" title="Remove">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCustom() {
+      const list = document.getElementById('custom-list');
+      
+      // Load custom baths from composer
+      const composerBaths = JSON.parse(localStorage.getItem('composer_baths') || '[]');
+      
+      if (composerBaths.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🎼</div>
+            <h3>No custom baths yet</h3>
+            <p>Go to the Composer to create your own multi-layer frequency baths</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = composerBaths.map(bath => `
+        <div class="item-card">
+          <div class="item-header">
+            <div>
+              <div class="item-title">${bath.name}</div>
+              <div class="item-meta">${bath.layers.length} layers · ${bath.mode}</div>
+            </div>
+            <div class="item-actions">
+              <button class="btn-icon" onclick="openComposerWith('${bath.id}')" title="Edit">✏️</button>
+              <button class="btn-icon" onclick="playCustomBath('${bath.id}')" title="Play">▶️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function removeFavorite(type, id) {
+      if (!confirm('Remove from favorites?')) return;
+      
+      favorites[type] = favorites[type].filter(fid => fid !== id);
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      renderCurrentTab();
+    }
+
+    function playItem(type, id) {
+      console.log(`Playing ${type}: ${id}`);
+      alert(`Playing ${type} ${id}\n\nAudio playback will be implemented when connected to the full frequency library.`);
+    }
+
+    function playCustomBath(id) {
+      console.log(`Playing custom bath: ${id}`);
+      alert('Custom bath playback will open in the Composer page.');
+      window.location.href = `composer.html?play=${id}`;
+    }
+
+    function openComposerWith(id) {
+      window.location.href = `composer.html?load=${id}`;
+    }
+
+    // Export functions
+    window.switchTab = switchTab;
+    window.removeFavorite = removeFavorite;
+    window.playItem = playItem;
+    window.playCustomBath = playCustomBath;
+    window.openComposerWith = openComposerWith;
+  </script>
+</body>
+</html>

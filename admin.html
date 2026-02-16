@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HealTone™</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/_config.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1e293b;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid #ef4444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ef4444;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #334155;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            background: #0f172a;
+        }
+
+        .table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #ef4444;
+            border-bottom: 2px solid #334155;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .table tr:hover {
+            background: #0f172a;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-free {
+            background: #475569;
+            color: #e2e8f0;
+        }
+
+        .badge-weekly {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .badge-lifetime {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .grant-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .grant-form input,
+        .grant-form select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.9rem;
+            border-radius: 10px;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+
+        .grant-form button {
+            flex: 0 0 auto;
+            padding: 0.9rem 1.5rem;
+        }
+
+        .form-note {
+            margin-top: 0.75rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: #ef4444;
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart {
+            height: 300px;
+            background: #0f172a;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            margin: 1rem 0;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1rem;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #ef4444;
+        }
+
+        .tier-select {
+            margin-top: 0.5rem;
+            width: 100%;
+            background: #0f172a;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .badge-admin {
+            background: #f97316;
+            color: #0f172a;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid;
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+            color: #fbbf24;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #f87171;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">🛡️ ADMIN DASHBOARD</div>
+        <div>
+            <span class="admin-badge" id="adminName">Admin</span>
+            <button class="btn btn-danger" style="margin-left: 1rem;" onclick="signOut()">Sign Out</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="alert alert-warning">
+            ⚠️ <strong>Admin Access</strong> - You have full access to user data and system controls. Use responsibly.
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeSubscriptions">0</div>
+                <div class="stat-label">Active Subs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="revenue">$0</div>
+                <div class="stat-label">Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalSessions">0</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2 class="section-title">⚡ Quick Actions</h2>
+            <div class="quick-actions">
+                <div class="action-card" onclick="prefillGrantForm('lifetime')">
+                    <div class="action-icon">💎</div>
+                    <div>Grant Lifetime</div>
+                </div>
+                <div class="action-card" onclick="refreshStats()">
+                    <div class="action-icon">🔄</div>
+                    <div>Refresh Data</div>
+                </div>
+                <div class="action-card" onclick="exportUsers()">
+                    <div class="action-icon">📊</div>
+                    <div>Export Users</div>
+                </div>
+                <div class="action-card" onclick="sendBroadcast()">
+                    <div class="action-icon">📧</div>
+                    <div>Send Email</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🎁 Grant or Adjust Access</h2>
+            <form id="grantTierForm" class="grant-form" onsubmit="handleGrantTier(event)">
+                <input type="email" id="grantEmail" placeholder="user@email.com" required>
+                <select id="grantTier" required>
+                    <option value="free">Free Tier</option>
+                    <option value="weekly">Weekly ($11)</option>
+                    <option value="lifetime">Lifetime</option>
+                </select>
+                <button type="submit" class="btn btn-success">Apply Tier</button>
+            </form>
+            <p class="form-note">User must have already signed up. Changes apply instantly and respect free-tier limits automatically.</p>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="section">
+            <h2 class="section-title">📈 Revenue Over Time</h2>
+            <div class="chart">Chart will be implemented with Chart.js or similar</div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="section">
+            <h2 class="section-title">👥 All Users</h2>
+            <input type="text" class="search-box" placeholder="Search users by email..." oninput="filterUsers(this.value)">
+            
+            <div style="overflow-x: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Subscription</th>
+                            <th>Sessions</th>
+                            <th>Created</th>
+                            <th>Team</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: #64748b;">
+                                Loading users...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="section">
+            <h2 class="section-title">⚡ Recent Activity</h2>
+            <div id="recentActivity">
+                <p style="color: #64748b; text-align: center; padding: 2rem;">Loading activity...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load from environment variables (injected by build system)
+        const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'https://your-project.supabase.co';
+        const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'your-anon-key-here';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ADMIN EMAILS - Add your email here (legacy fallback)
+        const ADMIN_EMAILS = ['origin@aeonmi.ai', 'admin@healtone.app'];
+        const SUPER_ADMIN_EMAILS = ['origin@aeonmi.ai'];
+
+        let allUsers = [];
+        let currentAdminId = null;
+        let currentAdminEmail = null;
+        let canManageAdmins = false;
+
+        async function checkAdminAccess() {
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError) {
+                alert('Unable to verify admin session.');
+                return false;
+            }
+
+            if (!session) {
+                window.location.href = 'login.html';
+                return false;
+            }
+
+            currentAdminId = session.user.id;
+            currentAdminEmail = session.user.email;
+            const normalizedEmail = (session.user.email || '').toLowerCase();
+
+            let profile = null;
+            try {
+                const { data } = await supabase
+                    .from('profiles')
+                    .select('is_admin, full_name')
+                    .eq('id', session.user.id)
+                    .maybeSingle();
+                profile = data;
+            } catch (_) {
+                profile = null;
+            }
+
+            const legacyAdminList = ADMIN_EMAILS.map(email => email.toLowerCase());
+            const superAdminList = SUPER_ADMIN_EMAILS.map(email => email.toLowerCase());
+            const hasLegacyAccess = legacyAdminList.includes(normalizedEmail);
+            const hasFlag = !!profile?.is_admin;
+
+            if (!hasLegacyAccess && !hasFlag) {
+                alert('⛔ Access Denied - Admin privileges required');
+                window.location.href = 'app.html';
+                return false;
+            }
+
+            canManageAdmins = superAdminList.includes(normalizedEmail);
+            const displayName = profile?.full_name ? `${profile.full_name} (${session.user.email})` : session.user.email;
+            document.getElementById('adminName').textContent = canManageAdmins ? `${displayName} • Super Admin` : displayName;
+            return true;
+        }
+
+        async function loadDashboard() {
+            const isAdmin = await checkAdminAccess();
+            if (!isAdmin) return;
+
+            // Load stats
+            await loadStats();
+            await loadUsers();
+            await loadRecentActivity();
+        }
+
+        async function loadStats() {
+            // Total users
+            const { count: userCount } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true });
+
+            document.getElementById('totalUsers').textContent = userCount || 0;
+
+            // Active subscriptions
+            const { count: activeCount } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .in('subscription_tier', ['weekly', 'lifetime'])
+                .eq('subscription_status', 'active');
+
+            document.getElementById('activeSubscriptions').textContent = activeCount || 0;
+
+            // Calculate revenue (approximate)
+            const { data: subs } = await supabase
+                .from('profiles')
+                .select('subscription_tier')
+                .in('subscription_tier', ['weekly', 'lifetime']);
+
+            let totalRevenue = 0;
+            if (subs) {
+                subs.forEach(s => {
+                    if (s.subscription_tier === 'lifetime') totalRevenue += 29.99;
+                    if (s.subscription_tier === 'weekly') totalRevenue += 2.99 * 4; // Estimate monthly
+                });
+            }
+
+            document.getElementById('revenue').textContent = `$${totalRevenue.toFixed(2)}`;
+
+            // Total sessions
+            const { data: progress } = await supabase
+                .from('user_progress')
+                .select('total_sessions');
+
+            let totalSessions = 0;
+            if (progress) {
+                totalSessions = progress.reduce((sum, p) => sum + (p.total_sessions || 0), 0);
+            }
+
+            document.getElementById('totalSessions').textContent = totalSessions;
+        }
+
+        async function loadUsers() {
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select(`
+                    *,
+                    user_progress(total_sessions)
+                `)
+                .order('created_at', { ascending: false });
+
+            allUsers = profiles || [];
+            renderUsers(allUsers);
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTable');
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: #64748b;">
+                            No users found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const tier = (user.subscription_tier || 'free').toLowerCase();
+                const tierClass = tier === 'free' ? 'badge-free' : tier === 'weekly' ? 'badge-weekly' : 'badge-lifetime';
+                const tierLabel = tier === 'lifetime' ? 'Lifetime' : tier === 'weekly' ? 'Weekly' : 'Free Tier';
+                const tierOptions = ['free', 'weekly', 'lifetime'].map(option => `
+                    <option value="${option}" ${option === tier ? 'selected' : ''}>
+                        ${option === 'free' ? 'Free Tier' : option === 'weekly' ? 'Weekly ($11)' : 'Lifetime'}
+                    </option>
+                `).join('');
+
+                const sessions = user.user_progress?.[0]?.total_sessions || 0;
+                const created = new Date(user.created_at).toLocaleDateString();
+                const teamBadge = user.is_admin
+                    ? '<span class="badge badge-admin">Admin</span>'
+                    : '<span class="badge badge-free">Member</span>';
+                const adminButton = canManageAdmins && user.id !== currentAdminId
+                    ? `<button class="btn btn-primary" onclick="toggleAdmin('${user.id}', ${user.is_admin ? 'false' : 'true'})">${user.is_admin ? 'Revoke Admin' : 'Make Admin'}</button>`
+                    : '';
+
+                return `
+                    <tr>
+                        <td>${user.email}</td>
+                        <td>${user.full_name || 'N/A'}</td>
+                        <td>
+                            <span class="badge ${tierClass}">${tierLabel}</span>
+                            <select class="tier-select" data-user-id="${user.id}" data-prev="${tier}">
+                                ${tierOptions}
+                            </select>
+                        </td>
+                        <td>${sessions}</td>
+                        <td>${created}</td>
+                        <td>${teamBadge}</td>
+                        <td style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${adminButton}
+                            <button class="btn btn-danger" onclick="deleteUser('${user.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterUsers(query) {
+            const filtered = allUsers.filter(user => 
+                user.email.toLowerCase().includes(query.toLowerCase()) ||
+                (user.full_name || '').toLowerCase().includes(query.toLowerCase())
+            );
+            renderUsers(filtered);
+        }
+
+        document.addEventListener('focusin', event => {
+            if (event.target.classList.contains('tier-select')) {
+                event.target.dataset.prev = event.target.value;
+            }
+        });
+
+        document.addEventListener('change', event => {
+            if (event.target.classList.contains('tier-select')) {
+                handleTierSelectChange(event.target);
+            }
+        });
+
+        function prefillGrantForm(tier = 'lifetime') {
+            const tierSelect = document.getElementById('grantTier');
+            const emailInput = document.getElementById('grantEmail');
+            if (tierSelect) tierSelect.value = tier;
+            if (emailInput) emailInput.focus();
+        }
+
+        async function handleTierSelectChange(selectEl) {
+            const userId = selectEl.dataset.userId;
+            if (!userId) return;
+
+            const nextTier = selectEl.value;
+            if (nextTier === selectEl.dataset.prev) return;
+
+            selectEl.disabled = true;
+            try {
+                await updateUserTier(userId, nextTier);
+                await loadUsers();
+            } catch (error) {
+                alert('Error updating tier: ' + error.message);
+                selectEl.value = selectEl.dataset.prev || 'free';
+            } finally {
+                selectEl.disabled = false;
+            }
+        }
+
+        async function handleGrantTier(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('grantEmail');
+            const tierSelect = document.getElementById('grantTier');
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            if (!emailInput || !tierSelect || !submitBtn) return;
+
+            const email = emailInput.value.trim();
+            const tier = tierSelect.value;
+            if (!email) {
+                alert('Please enter an email address.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Applying...';
+
+            try {
+                await setTierForEmail(email, tier);
+                alert(`✓ ${tier.toUpperCase()} access applied to ${email}`);
+                emailInput.value = '';
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Apply Tier';
+                await loadUsers();
+            }
+        }
+
+        async function setTierForEmail(email, tier) {
+            const normalizedEmail = email.trim().toLowerCase();
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('id, email')
+                .ilike('email', normalizedEmail)
+                .maybeSingle();
+
+            if (error) {
+                throw error;
+            }
+
+            if (!data) {
+                throw new Error('No user found with that email. Have they signed up yet?');
+            }
+
+            await updateUserTier(data.id, tier);
+        }
+
+        async function updateUserTier(userId, tier) {
+            const status = tier === 'free' ? 'inactive' : 'active';
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    subscription_tier: tier,
+                    subscription_status: status
+                })
+                .eq('id', userId);
+
+            if (error) {
+                throw error;
+            }
+        }
+
+        async function loadRecentActivity() {
+            const { data: history } = await supabase
+                .from('frequency_history')
+                .select('*, profiles(email)')
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            const container = document.getElementById('recentActivity');
+            
+            if (!history || history.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; text-align: center; padding: 2rem;">No recent activity</p>';
+                return;
+            }
+
+            container.innerHTML = history.map(item => {
+                const time = new Date(item.created_at).toLocaleString();
+                return `
+                    <div style="padding: 1rem; border-bottom: 1px solid #334155;">
+                        <strong>${item.profiles?.email || 'Unknown'}</strong> played 
+                        <strong>${item.frequency_name}</strong> (${item.frequency_hz}Hz)
+                        <br>
+                        <small style="color: #64748b;">${time}</small>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Admin Actions
+
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user? This cannot be undone.')) return;
+
+            try {
+                await supabase.from('profiles').delete().eq('id', userId);
+                alert('✓ User deleted');
+                loadUsers();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function toggleAdmin(userId, shouldPromote) {
+            if (!canManageAdmins) {
+                alert('Only super admins can change admin roles.');
+                return;
+            }
+
+            if (userId === currentAdminId) {
+                alert('You cannot change your own admin status here.');
+                return;
+            }
+
+            try {
+                await supabase
+                    .from('profiles')
+                    .update({ is_admin: shouldPromote })
+                    .eq('id', userId);
+
+                alert(shouldPromote ? '✓ Admin access granted.' : '✓ Admin access removed.');
+                await loadUsers();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        function refreshStats() {
+            loadDashboard();
+            alert('✓ Data refreshed');
+        }
+
+        function exportUsers() {
+            const csv = ['Email,Name,Tier,Sessions,Created'].concat(
+                allUsers.map(u => 
+                    `${u.email},${u.full_name || ''},${u.subscription_tier},${u.user_progress?.[0]?.total_sessions || 0},${u.created_at}`
+                )
+            ).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `healtone-users-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function sendBroadcast() {
+            alert('Email broadcast feature coming soon!');
+        }
+
+        async function signOut() {
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('load', loadDashboard);
+    </script>
+</body>
+</html>

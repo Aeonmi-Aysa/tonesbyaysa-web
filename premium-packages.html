@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Access - Tones by Aysa</title>
+  
+  <!-- RevenueCat Web SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@revenuecat/purchases-js@latest/dist/purchases.min.js"></script>
+  
+  <!-- Supabase for user authentication -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/_config.js" defer></script>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Allura&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #533483 50%, #8e44ad 75%, #c84b8a 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #f1f5f9;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background overlay */
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 30%, rgba(142, 68, 173, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(200, 75, 138, 0.3) 0%, transparent 50%);
+      animation: gradientShift 15s ease infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .brand-tones {
+      font-family: 'Cinzel', serif;
+      font-size: 56px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #e0b3ff 0%, #c79eff 50%, #9b6fd9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 8px;
+      margin-bottom: 8px;
+      text-shadow: 0 0 40px rgba(199, 158, 255, 0.5);
+    }
+
+    .brand-by {
+      font-family: 'Allura', cursive;
+      font-size: 28px;
+      color: rgba(255, 255, 255, 0.8);
+      margin: -5px 0;
+    }
+
+    .brand-aysa {
+      font-family: 'Allura', cursive;
+      font-size: 64px;
+      background: linear-gradient(135deg, #ffffff 0%, #f0d9ff 50%, #e0b3ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+
+    .tagline {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Loading State */
+    .loading-container {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(212, 165, 255, 0.3);
+      border-top-color: #d4a5ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+    }
+
+    /* Package Grid */
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .package-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .package-card:hover {
+      border-color: rgba(212, 165, 255, 0.6);
+      box-shadow: 0 0 40px rgba(199, 158, 255, 0.3);
+      transform: translateY(-5px);
+    }
+
+    .package-card.featured {
+      background: linear-gradient(135deg, rgba(212, 165, 255, 0.15), rgba(142, 68, 173, 0.15));
+      border: 2px solid rgba(212, 165, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    .package-badge {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: linear-gradient(135deg, #d4a5ff, #8e44ad);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 0 0 12px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      box-shadow: 0 4px 12px rgba(142, 68, 173, 0.4);
+    }
+
+    .tier-label {
+      font-size: 12px;
+      color: #d4a5ff;
+      font-weight: 500;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .tier-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .tier-description {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+      margin-bottom: 24px;
+      flex-grow: 1;
+    }
+
+    .tier-price {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+
+    .tier-period {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+      margin-left: 8px;
+    }
+
+    .package-button {
+      background: linear-gradient(135deg, #b19cd9 0%, #8e44ad 100%);
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(142, 68, 173, 0.4);
+    }
+
+    .package-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(142, 68, 173, 0.6);
+    }
+
+    .package-button:active {
+      transform: translateY(0);
+    }
+
+    .package-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Status Messages */
+    .status-message {
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .status-success {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #10b981;
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
+
+    .status-info {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #3b82f6;
+    }
+
+    /* Already Premium Banner */
+    .premium-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+      border: 2px solid rgba(16, 185, 129, 0.4);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .premium-banner h2 {
+      color: #10b981;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .premium-banner p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+
+    .premium-banner button {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .premium-banner button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .brand-tones { font-size: 36px; }
+      .brand-aysa { font-size: 48px; }
+      .package-card.featured { transform: scale(1); }
+      .packages-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-overlay"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="brand-tones">TONES</div>
+      <div class="brand-by">by</div>
+      <div class="brand-aysa">Aysa</div>
+      <p class="tagline">Experience full immersion, no commitment required</p>
+    </div>
+
+    <!-- Status Messages -->
+    <div id="statusMessage"></div>
+
+    <!-- Loading State -->
+    <div id="loadingContainer" class="loading-container">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading premium packages...</div>
+    </div>
+
+    <!-- Premium Banner (shown if already premium) -->
+    <div id="premiumBanner" style="display: none;"></div>
+
+    <!-- Packages Grid -->
+    <div id="packagesContainer" style="display: none;">
+      <div class="packages-grid" id="packagesGrid">
+        <!-- Packages will be loaded here dynamically -->
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-note">
+      <p>All purchases are securely processed via Stripe. Your subscription syncs across web and mobile automatically.</p>
+      <p style="margin-top: 10px;">Questions? Contact us at support@tonesbyaysa.com</p>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const REVENUECAT_API_KEY = 'strp_lDTYccvZSTbMQBCUuRZviVJtDXv';
+    const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'https://your-project.supabase.co';
+    const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'your-anon-key-here';
+
+    // Initialize Supabase
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Global variables
+    let purchases;
+    let offerings;
+    let currentUser = null;
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      await initApp();
+    });
+
+    async function initApp() {
+      try {
+        console.log('🚀 Initializing Tones by Aysa Premium...');
+
+        // Check if user is logged in
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        
+        if (!user) {
+          showStatus('Please log in to access premium packages.', 'info');
+          setTimeout(() => {
+            window.location.href = '/login.html';
+          }, 2000);
+          return;
+        }
+
+        currentUser = user;
+        console.log('✅ User authenticated:', user.email);
+
+        // Initialize RevenueCat
+        await initRevenueCat();
+
+      } catch (error) {
+        console.error('❌ Initialization error:', error);
+        showStatus('Failed to initialize. Please refresh the page.', 'error');
+      }
+    }
+
+    async function initRevenueCat() {
+      try {
+        console.log('🔧 Initializing RevenueCat...');
+        
+        // Initialize RevenueCat SDK
+        purchases = new RevenueCat.Purchases(REVENUECAT_API_KEY);
+        
+        // Set user ID
+        if (currentUser) {
+          await purchases.setAppUserId(currentUser.id);
+          console.log('✅ RevenueCat user ID set:', currentUser.id);
+        }
+
+        // Get offerings
+        offerings = await purchases.getOfferings();
+        console.log('✅ Offerings loaded:', offerings);
+
+        if (!offerings.current || !offerings.current.availablePackages.length) {
+          showStatus('No premium packages available at this time.', 'info');
+          document.getElementById('loadingContainer').style.display = 'none';
+          return;
+        }
+
+        // Check current subscription status
+        await checkSubscriptionStatus();
+
+        // Display packages
+        displayPackages();
+
+      } catch (error) {
+        console.error('❌ RevenueCat initialization failed:', error);
+        showStatus('Failed to load packages: ' + error.message, 'error');
+        document.getElementById('loadingContainer').style.display = 'none';
+      }
+    }
+
+    async function checkSubscriptionStatus() {
+      try {
+        const customerInfo = await purchases.getCustomerInfo();
+        console.log('📊 Customer info:', customerInfo);
+
+        const activeEntitlements = customerInfo.entitlements.active;
+        const hasAysaPro = activeEntitlements['Aysa Pro'] !== undefined;
+        const hasAysaLifetime = activeEntitlements['Aysa Lifetime'] !== undefined;
+
+        if (hasAysaLifetime || hasAysaPro) {
+          const tier = hasAysaLifetime ? 'Lifetime Access' : 'Aysa Pro';
+          showPremiumBanner(tier);
+          document.getElementById('packagesContainer').style.display = 'none';
+        } else {
+          document.getElementById('premiumBanner').style.display = 'none';
+          document.getElementById('packagesContainer').style.display = 'block';
+        }
+
+      } catch (error) {
+        console.error('❌ Error checking subscription:', error);
+      }
+    }
+
+    function showPremiumBanner(tier) {
+      const banner = document.getElementById('premiumBanner');
+      banner.innerHTML = `
+        <h2>🎉 You're Already Premium!</h2>
+        <p>You have active <strong>${tier}</strong>. Enjoy unlimited access to all frequencies.</p>
+        <button onclick="window.location.href='/app.html'">Go to App</button>
+      `;
+      banner.style.display = 'block';
+      document.getElementById('loadingContainer').style.display = 'none';
+    }
+
+    function displayPackages() {
+      const grid = document.getElementById('packagesGrid');
+      grid.innerHTML = '';
+
+      const packages = offerings.current.availablePackages;
+      console.log('📦 Available packages:', packages);
+
+      packages.forEach((pkg, index) => {
+        const product = pkg.product;
+        const isLifetime = product.identifier.includes('lifetime');
+        const isWeekly = product.identifier.includes('weekly');
+
+        let label, title, description, badge;
+
+        if (isWeekly) {
+          label = 'Sustain';
+          title = 'Weekly Renewal';
+          description = 'Maintain your elevation with continuous access to all frequencies and features.';
+          badge = '';
+        } else if (isLifetime) {
+          label = 'Secure Forever';
+          title = 'Lifetime Access';
+          description = 'One-time investment for eternal access to all frequencies, updates, and new features.';
+          badge = '<div class="package-badge">✨ Best Value</div>';
+        } else {
+          label = 'Premium';
+          title = product.title || product.identifier;
+          description = product.description || 'Premium access to all features';
+          badge = '';
+        }
+
+        const card = `
+          <div class="package-card ${isLifetime ? 'featured' : ''}">
+            ${badge}
+            <div class="tier-label">${label}</div>
+            <div class="tier-title">${title}</div>
+            <div class="tier-description">${description}</div>
+            <div class="tier-price">
+              ${product.priceString}
+              ${!isLifetime ? '<span class="tier-period">/week</span>' : ''}
+            </div>
+            <button class="package-button" onclick="purchasePackage(${index})">
+              Purchase Now
+            </button>
+          </div>
+        `;
+
+        grid.innerHTML += card;
+      });
+
+      document.getElementById('loadingContainer').style.display = 'none';
+      document.getElementById('packagesContainer').style.display = 'block';
+    }
+
+    async function purchasePackage(index) {
+      const pkg = offerings.current.availablePackages[index];
+      const product = pkg.product;
+
+      console.log('💳 Starting purchase:', product.identifier);
+      showStatus('Processing payment...', 'info');
+
+      // Disable all buttons during purchase
+      const buttons = document.querySelectorAll('.package-button');
+      buttons.forEach(btn => btn.disabled = true);
+
+      try {
+        const result = await purchases.purchasePackage(pkg);
+        console.log('✅ Purchase successful:', result);
+
+        // Check if entitlement was granted
+        const hasAysaPro = result.customerInfo.entitlements.active['Aysa Pro'] !== undefined;
+        const hasAysaLifetime = result.customerInfo.entitlements.active['Aysa Lifetime'] !== undefined;
+
+        if (hasAysaPro || hasAysaLifetime) {
+          showStatus('🎉 Purchase successful! Welcome to premium!', 'success');
+          
+          // Redirect to app after 2 seconds
+          setTimeout(() => {
+            window.location.href = '/app.html';
+          }, 2000);
+        } else {
+          showStatus('Purchase complete! Processing entitlement...', 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        }
+
+      } catch (error) {
+        console.error('❌ Purchase failed:', error);
+        
+        if (error.code === 'USER_CANCELLED') {
+          showStatus('Purchase cancelled.', 'info');
+        } else {
+          showStatus('Purchase failed: ' + (error.message || 'Unknown error'), 'error');
+        }
+
+        // Re-enable buttons
+        buttons.forEach(btn => btn.disabled = false);
+      }
+    }
+
+    function showStatus(message, type = 'info') {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+      
+      // Auto-hide after 5 seconds for success/error
+      if (type !== 'info') {
+        setTimeout(() => {
+          statusDiv.innerHTML = '';
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>

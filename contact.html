@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - HealTone™</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
+        .header { background: rgba(15, 12, 41, 0.9); padding: 1.5rem 2rem; backdrop-filter: blur(10px); border-bottom: 1px solid rgba(168, 85, 247, 0.2); }
+        .nav { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 800; color: #a855f7; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 600; }
+        .container { max-width: 800px; margin: 0 auto; padding: 4rem 2rem; }
+        h1 { font-size: 3.5rem; margin-bottom: 2rem; text-align: center; }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+        .contact-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 2rem; border-radius: 20px; text-align: center; }
+        .contact-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .form-section { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 3rem; border-radius: 24px; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-input, .form-textarea { width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.1); color: white; font-size: 1rem; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: #a855f7; }
+        .form-textarea { min-height: 150px; resize: vertical; }
+        .btn-submit { width: 100%; padding: 1rem; background: linear-gradient(135deg, #a855f7, #ec4899); border: none; border-radius: 12px; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4); }
+        .alert { padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: none; }
+        .alert-success { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; }
+        @media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">💜 HealTone™</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/app.html">App</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/faq.html">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Get in Touch</h1>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">📧</div>
+                <h3>Email Us</h3>
+                <p style="margin-top: 0.5rem;">origin@aeonmi.ai</p>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon">💬</div>
+                <h3>Support</h3>
+                <p style="margin-top: 0.5rem;">We respond within 24 hours</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 style="margin-bottom: 1.5rem;">Send us a message</h2>
+            
+            <div id="successAlert" class="alert alert-success">
+                ✓ Thank you! We'll get back to you within 24 hours.
+            </div>
+
+            <form id="contactForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="form-input" name="subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-textarea" name="message" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            // In production, send to Netlify Functions or your backend
+            // For now, just show success message
+            document.getElementById('successAlert').style.display = 'block';
+            document.getElementById('contactForm').reset();
+            
+            setTimeout(() => {
+                document.getElementById('successAlert').style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

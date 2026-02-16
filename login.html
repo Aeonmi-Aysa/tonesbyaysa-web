@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tones by Aysa - Sign In</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/_config.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #2a1a3f 50%, #1a0f2e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            width: 90%;
+            align-items: center;
+        }
+
+        /* LEFT SIDE - IMAGE */
+        .image-side {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(139, 69, 19, 0.4), 0 0 40px rgba(218, 165, 32, 0.3);
+            background: linear-gradient(135deg, #2a1a3f, #3a2a4f);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3a2a4f, #2a1a3f);
+            font-size: 80px;
+            color: rgba(218, 165, 32, 0.6);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(218, 165, 32, 0.1) 0%, rgba(139, 69, 19, 0.2) 100%);
+            pointer-events: none;
+        }
+
+        .logo-badge {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 18px;
+            color: #2a1a3f;
+            box-shadow: 0 8px 32px rgba(218, 165, 32, 0.3);
+            z-index: 10;
+        }
+
+        /* RIGHT SIDE - FORM */
+        .form-side {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 60px 45px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            margin-bottom: 35px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2a1a3f;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #8b4513 0%, #daa520 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #999;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 35px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .tab {
+            padding: 0;
+            background: none;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #daa520;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #daa520, #8b4513);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 14px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #daa520;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #daa520;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 25px;
+        }
+
+        .forgot-password a {
+            color: #daa520;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .forgot-password a:hover {
+            color: #8b4513;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #daa520 0%, #8b4513 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(218, 165, 32, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(218, 165, 32, 0.5);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 28px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: #e8e8e8;
+        }
+
+        .divider-text {
+            padding: 0 15px;
+            color: #999;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .oauth-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            white-space: nowrap;
+            min-height: 44px;
+        }
+
+        .oauth-btn:hover {
+            border-color: #daa520;
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffe6e6;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .success {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #e6ffe6;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .image-side {
+                order: 2;
+            }
+
+            .form-side {
+                order: 1;
+            }
+
+            .image-wrapper {
+                max-width: 300px;
+            }
+
+            .form-side {
+                padding: 40px 30px;
+            }
+
+            .title {
+                font-size: 26px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+
+            .form-side {
+                padding: 30px 20px;
+            }
+
+            .image-wrapper {
+                max-width: 250px;
+            }
+
+            .tabs {
+                gap: 15px;
+            }
+
+            .oauth-buttons {
+                flex-direction: column;
+            }
+
+            .oauth-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LEFT SIDE - IMAGE -->
+        <div class="image-side">
+            <div class="image-wrapper">
+                <div class="image-placeholder">🎵</div>
+                <div class="image-overlay"></div>
+                <div class="logo-badge">💜 TONES</div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE - FORM -->
+        <div class="form-side">
+            <div class="header" id="pageHeader">
+                <h1 class="title">Welcome Back</h1>
+                <p class="subtitle">SIGN IN TO YOUR ACCOUNT</p>
+            </div>
+
+            <div class="tabs">
+                <button type="button" class="tab active" data-tab="signin">Sign In</button>
+                <button type="button" class="tab" data-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- SIGN IN FORM -->
+            <div id="signin" class="form-section active">
+                <form id="signinForm">
+                    <div class="form-group">
+                        <label for="signinEmail">Email Address</label>
+                        <input type="email" id="signinEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signinPassword">Password</label>
+                        <input type="password" id="signinPassword" autocomplete="current-password" required>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe" style="margin: 0; text-transform: none;">Remember me</label>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="/forgot-password.html">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn">Sign In</button>
+                    <div id="signinError" class="error"></div>
+                </form>
+
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-text">Or Continue With</div>
+                    <div class="divider-line"></div>
+                </div>
+
+                <div class="oauth-buttons">
+                    <button type="button" class="oauth-btn" id="googleSignin">
+                        <span style="font-size: 18px;">🔵</span> Google
+                    </button>
+                    <button type="button" class="oauth-btn" id="facebookSignin">
+                        <span style="font-size: 18px;">👍</span> Facebook
+                    </button>
+                </div>
+            </div>
+
+            <!-- SIGN UP FORM -->
+            <div id="signup" class="form-section">
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" autocomplete="new-password" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" autocomplete="new-password" required>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="agreeTerms" required>
+                        <label for="agreeTerms" style="margin: 0; text-transform: none;">I agree to the Terms of Service</label>
+                    </div>
+                    <button type="submit" class="btn">Create Account</button>
+                    <div id="signupError" class="error"></div>
+                </form>
+
+                <div class="divider">
+                    <div class="divider-line"></div>
+                    <div class="divider-text">Or Continue With</div>
+                    <div class="divider-line"></div>
+                </div>
+
+                <div class="oauth-buttons">
+                    <button type="button" class="oauth-btn" id="googleSignup">
+                        <span style="font-size: 18px;">🔵</span> Google
+                    </button>
+                    <button type="button" class="oauth-btn" id="facebookSignup">
+                        <span style="font-size: 18px;">👍</span> Facebook
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPABASE SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        let supabaseClient = null;
+
+        // Initialize on page load
+        window.addEventListener('load', initSupabase);
+
+        async function initSupabase() {
+            try {
+        // Get credentials from environment variables or use placeholders
+                const SUPABASE_URL = window.ENV?.SUPABASE_URL || 'https://your-project.supabase.co';
+                const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'your-anon-key-here';
+
+                if (!window.supabase) {
+                    console.error('❌ Supabase SDK not loaded');
+                    return;
+                }
+
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✓ Supabase initialized');
+
+                checkExistingSession();
+            } catch (err) {
+                console.error('❌ Supabase error:', err);
+            }
+        }
+
+        async function checkExistingSession() {
+            if (!supabaseClient) return;
+
+            try {
+                const { data } = await supabaseClient.auth.getSession();
+                if (data?.session) {
+                    console.log('User already logged in, redirecting...');
+                    window.location.href = 'app.html';
+                }
+            } catch (err) {
+                console.log('No existing session');
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                
+                document.querySelectorAll('.form-section').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+                document.getElementById(targetTab).classList.add('active');
+                this.classList.add('active');
+
+                const header = document.getElementById('pageHeader');
+                if (targetTab === 'signin') {
+                    header.innerHTML = '<h1 class="title">Welcome Back</h1><p class="subtitle">SIGN IN TO YOUR ACCOUNT</p>';
+                } else {
+                    header.innerHTML = '<h1 class="title">Join Us</h1><p class="subtitle">CREATE YOUR ACCOUNT</p>';
+                }
+
+                document.querySelectorAll('.error').forEach(el => el.classList.remove('show'));
+            });
+        });
+
+        // Sign In
+        document.getElementById('signinForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('signinEmail').value.trim();
+            const password = document.getElementById('signinPassword').value;
+            const errorEl = document.getElementById('signinError');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            errorEl.classList.remove('show');
+            submitBtn.disabled = true;
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                console.log('✓ Signed in:', email);
+                window.location.href = 'app.html';
+                
+            } catch (err) {
+                console.error('Sign in error:', err);
+                errorEl.textContent = err.message;
+                errorEl.classList.add('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Sign Up
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorEl = document.getElementById('signupError');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            errorEl.classList.remove('show');
+            
+            if (password !== confirmPassword) {
+                errorEl.textContent = 'Passwords do not match';
+                errorEl.classList.add('show');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: { 
+                        data: { full_name: name },
+                        emailRedirectTo: window.location.origin + '/app.html'
+                    }
+                });
+                
+                if (error) throw error;
+                
+                console.log('✓ Account created:', email);
+                errorEl.classList.remove('error');
+                errorEl.classList.add('success', 'show');
+                errorEl.textContent = '✓ Account created! Check your email to verify.';
+                
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Sign up error:', err);
+                errorEl.textContent = err.message;
+                errorEl.classList.add('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Google OAuth
+        async function signInWithGoogle() {
+            if (!supabaseClient) {
+                alert('Supabase not initialized');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/app.html'
+                    }
+                });
+                if (error) throw error;
+            } catch (err) {
+                console.error('Google signin error:', err);
+                alert('Google sign in failed: ' + err.message);
+            }
+        }
+
+        document.getElementById('googleSignin').addEventListener('click', signInWithGoogle);
+        document.getElementById('googleSignup').addEventListener('click', signInWithGoogle);
+
+        // Facebook OAuth
+        async function signInWithFacebook() {
+            if (!supabaseClient) {
+                alert('Supabase not initialized');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'facebook',
+                    options: {
+                        redirectTo: window.location.origin + '/app.html'
+                    }
+                });
+                if (error) throw error;
+            } catch (err) {
+                console.error('Facebook signin error:', err);
+                alert('Facebook sign in failed: ' + err.message);
+            }
+        }
+
+        document.getElementById('facebookSignin').addEventListener('click', signInWithFacebook);
+        document.getElementById('facebookSignup').addEventListener('click', signInWithFacebook);
+    </script>
+</body>
+</html>

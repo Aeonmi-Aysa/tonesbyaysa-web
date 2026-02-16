@@ -1,0 +1,20 @@
+project_id = "your-project-ref"
+api_id = "default"
+
+[api]
+url = "${SUPABASE_URL}"
+anon_key = "${SUPABASE_ANON_KEY}"
+service_role_key = "${SUPABASE_SERVICE_ROLE_KEY}"
+
+[db]
+port = 54322
+schema = "public,storage"
+major_version = 15
+
+[studio]
+port = 54323
+
+[functions]
+[functions.common_env]
+SUPABASE_URL = "${SUPABASE_URL}"
+SUPABASE_ANON_KEY = "${SUPABASE_ANON_KEY}"

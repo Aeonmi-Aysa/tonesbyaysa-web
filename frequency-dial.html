@@ -1,0 +1,430 @@
+<!-- FREQUENCY DIAL COMPONENT -->
+<style>
+  .frequency-dial-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(10, 10, 20, 0.5), rgba(42, 26, 63, 0.5));
+    border-radius: 20px;
+    border: 1px solid rgba(218, 165, 32, 0.2);
+    margin: 30px 0;
+  }
+
+  .frequency-dial-title {
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #daa520 0%, #8b4513 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .frequency-dial-subtitle {
+    font-size: 12px;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .dial-display {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 0 auto;
+  }
+
+  .dial-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.2));
+  }
+
+  .dial-needle {
+    transform-origin: 140px 140px;
+    transition: transform 0.1s ease-out;
+  }
+
+  .frequency-readout {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    min-width: 200px;
+  }
+
+  .frequency-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #daa520;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+
+  .frequency-unit {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .frequency-slider-wrapper {
+    width: 100%;
+    max-width: 300px;
+    padding: 0 20px;
+  }
+
+  .frequency-slider {
+    width: 100%;
+    height: 8px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(90deg, 
+      #daa520 0%, 
+      #8b4513 50%, 
+      #daa520 100%);
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .frequency-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #daa520;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(218, 165, 32, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .frequency-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #daa520;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(218, 165, 32, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .frequency-presets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .preset-btn {
+    padding: 10px 12px;
+    background: rgba(218, 165, 32, 0.1);
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    border-radius: 8px;
+    color: #daa520;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .preset-btn:hover {
+    background: rgba(218, 165, 32, 0.2);
+    border-color: #daa520;
+    box-shadow: 0 0 10px rgba(218, 165, 32, 0.2);
+  }
+
+  .preset-btn.active {
+    background: #daa520;
+    color: #0f0f1e;
+    box-shadow: 0 0 15px rgba(218, 165, 32, 0.4);
+  }
+
+  .dial-mode-toggle {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .mode-btn {
+    padding: 8px 16px;
+    background: rgba(218, 165, 32, 0.1);
+    border: 1px solid rgba(218, 165, 32, 0.3);
+    border-radius: 6px;
+    color: #888;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .mode-btn.active {
+    background: #daa520;
+    color: #0f0f1e;
+    border-color: #daa520;
+  }
+
+  /* Dark mode */
+  body.dark-mode .frequency-dial-container {
+    background: linear-gradient(135deg, rgba(10, 10, 20, 0.8), rgba(42, 26, 63, 0.8));
+  }
+
+  /* Light mode */
+  body.light-mode .frequency-dial-container {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 250, 0.8));
+  }
+
+  body.light-mode .frequency-readout {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(218, 165, 32, 0.5);
+  }
+
+  body.light-mode .frequency-value {
+    color: #8b4513;
+  }
+
+  body.light-mode .preset-btn {
+    color: #8b4513;
+    border-color: rgba(139, 69, 19, 0.3);
+  }
+
+  body.light-mode .preset-btn:hover {
+    background: rgba(218, 165, 32, 0.15);
+    border-color: #8b4513;
+  }
+
+  body.light-mode .preset-btn.active {
+    background: #daa520;
+    color: white;
+  }
+</style>
+
+<div class="frequency-dial-container" id="frequencyDialContainer">
+  <div>
+    <div class="frequency-dial-title">Frequency Dial</div>
+    <div class="frequency-dial-subtitle">Tune Your Vibration</div>
+  </div>
+
+  <div class="dial-display">
+    <svg class="dial-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background circle with gradient -->
+      <defs>
+        <radialGradient id="dialGradient" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" style="stop-color:rgba(218,165,32,0.1);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgba(139,69,19,0.05);stop-opacity:1" />
+        </radialGradient>
+        <linearGradient id="needleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#daa520;stop-opacity:0.3" />
+          <stop offset="50%" style="stop-color:#daa520;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#daa520;stop-opacity:0.3" />
+        </linearGradient>
+      </defs>
+
+      <!-- Outer ring -->
+      <circle cx="140" cy="140" r="130" fill="url(#dialGradient)" stroke="#daa520" stroke-width="2" opacity="0.6"/>
+      
+      <!-- Tick marks -->
+      <g id="tickMarks" stroke="#daa520" stroke-width="1" opacity="0.4">
+        <line x1="140" y1="20" x2="140" y2="35" />
+        <line x1="214" y1="50" x2="204" y2="60" />
+        <line x1="250" y1="140" x2="235" y2="140" />
+        <line x1="214" y1="230" x2="204" y2="220" />
+        <line x1="140" y1="260" x2="140" y2="245" />
+        <line x1="66" y1="230" x2="76" y2="220" />
+        <line x1="30" y1="140" x2="45" y2="140" />
+        <line x1="66" y1="50" x2="76" y2="60" />
+      </g>
+
+      <!-- Center point -->
+      <circle cx="140" cy="140" r="8" fill="#daa520" opacity="0.8"/>
+      <circle cx="140" cy="140" r="5" fill="#0f0f1e"/>
+
+      <!-- Needle -->
+      <g class="dial-needle" id="dialNeedle">
+        <line x1="140" y1="140" x2="140" y2="50" stroke="url(#needleGradient)" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="140" cy="140" r="4" fill="#daa520"/>
+      </g>
+
+      <!-- Frequency labels -->
+      <text x="140" y="35" text-anchor="middle" font-size="10" fill="#daa520" opacity="0.7">0.01</text>
+      <text x="245" y="145" text-anchor="start" font-size="10" fill="#daa520" opacity="0.7">10k</text>
+      <text x="140" y="270" text-anchor="middle" font-size="10" fill="#daa520" opacity="0.7">500k</text>
+      <text x="15" y="145" text-anchor="end" font-size="10" fill="#daa520" opacity="0.7">100k</text>
+    </svg>
+  </div>
+
+  <div class="frequency-readout">
+    <div class="frequency-value" id="frequencyDisplay">432.0</div>
+    <div class="frequency-unit">Hz</div>
+  </div>
+
+  <div class="frequency-slider-wrapper">
+    <input 
+      type="range" 
+      class="frequency-slider" 
+      id="frequencySlider"
+      min="0"
+      max="1000000"
+      value="432000"
+      step="1"
+    />
+  </div>
+
+  <div class="dial-mode-toggle">
+    <button class="mode-btn active" data-mode="linear">Linear</button>
+    <button class="mode-btn" data-mode="log">Logarithmic</button>
+  </div>
+
+  <div class="frequency-presets">
+    <button class="preset-btn" data-freq="40">40 Hz</button>
+    <button class="preset-btn" data-freq="111">111 Hz</button>
+    <button class="preset-btn" data-freq="174">174 Hz</button>
+    <button class="preset-btn" data-freq="285">285 Hz</button>
+    <button class="preset-btn" data-freq="396">396 Hz</button>
+    <button class="preset-btn" data-freq="417">417 Hz</button>
+    <button class="preset-btn" data-freq="432">432 Hz</button>
+    <button class="preset-btn" data-freq="528">528 Hz</button>
+    <button class="preset-btn" data-freq="639">639 Hz</button>
+    <button class="preset-btn" data-freq="741">741 Hz</button>
+    <button class="preset-btn" data-freq="852">852 Hz</button>
+    <button class="preset-btn" data-freq="963">963 Hz</button>
+  </div>
+</div>
+
+<script>
+  // Frequency Dial Controller
+  class FrequencyDial {
+    constructor() {
+      this.slider = document.getElementById('frequencySlider');
+      this.display = document.getElementById('frequencyDisplay');
+      this.needle = document.getElementById('dialNeedle');
+      this.container = document.getElementById('frequencyDialContainer');
+      this.currentMode = 'linear';
+      
+      this.MIN_FREQ = 0.01;
+      this.MAX_FREQ = 500000;
+      
+      this.init();
+    }
+
+    init() {
+      // Slider events
+      this.slider.addEventListener('input', (e) => this.updateFromSlider(e));
+      
+      // Preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => this.setFrequency(parseFloat(e.target.dataset.freq)));
+      });
+
+      // Mode toggle
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => this.setMode(e.target.dataset.mode));
+      });
+
+      this.updateDisplay(432);
+    }
+
+    updateFromSlider(e) {
+      const value = parseFloat(e.target.value);
+      let freq;
+
+      if (this.currentMode === 'log') {
+        // Convert slider position to logarithmic frequency
+        const minLog = Math.log10(this.MIN_FREQ);
+        const maxLog = Math.log10(this.MAX_FREQ);
+        const range = maxLog - minLog;
+        const normalized = value / 1000000;
+        freq = Math.pow(10, minLog + (normalized * range));
+      } else {
+        // Linear mode
+        freq = (value / 1000000) * this.MAX_FREQ;
+      }
+
+      this.updateDisplay(Math.max(this.MIN_FREQ, freq));
+    }
+
+    setFrequency(freq) {
+      this.updateDisplay(freq);
+      
+      // Update slider position
+      let sliderValue;
+      if (this.currentMode === 'log') {
+        const minLog = Math.log10(this.MIN_FREQ);
+        const maxLog = Math.log10(this.MAX_FREQ);
+        const range = maxLog - minLog;
+        const logFreq = Math.log10(freq);
+        sliderValue = ((logFreq - minLog) / range) * 1000000;
+      } else {
+        sliderValue = (freq / this.MAX_FREQ) * 1000000;
+      }
+      
+      this.slider.value = Math.min(1000000, sliderValue);
+    }
+
+    updateDisplay(freq) {
+      // Format frequency display
+      let displayValue, unit;
+      
+      if (freq >= 1000) {
+        displayValue = (freq / 1000).toFixed(2);
+        unit = 'kHz';
+      } else {
+        displayValue = freq.toFixed(2);
+        unit = 'Hz';
+      }
+      
+      this.display.textContent = displayValue;
+      
+      // Update unit in next element
+      const unitEl = this.display.nextElementSibling;
+      unitEl.textContent = unit;
+
+      // Rotate needle (0.01Hz = 0°, 500kHz = 360°)
+      const logMin = Math.log10(this.MIN_FREQ);
+      const logMax = Math.log10(this.MAX_FREQ);
+      const logFreq = Math.log10(freq);
+      const rotation = ((logFreq - logMin) / (logMax - logMin)) * 360;
+      
+      this.needle.style.transform = `rotate(${rotation}deg)`;
+
+      // Update preset button highlights
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        const presetFreq = parseFloat(btn.dataset.freq);
+        btn.classList.toggle('active', Math.abs(presetFreq - freq) < 0.5);
+      });
+    }
+
+    setMode(mode) {
+      this.currentMode = mode;
+      
+      // Update button states
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      // Re-map slider for new mode
+      const currentFreq = this.getCurrentFrequency();
+      this.setFrequency(currentFreq);
+    }
+
+    getCurrentFrequency() {
+      return parseFloat(this.display.textContent.replace(/,/g, ''));
+    }
+  }
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      window.frequencyDial = new FrequencyDial();
+    });
+  } else {
+    window.frequencyDial = new FrequencyDial();
+  }
+</script>

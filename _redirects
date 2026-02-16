@@ -1,0 +1,17 @@
+# Serve root and key HTML pages directly (no SPA rewrite)
+ /                  /login.html 302
+ /app.html          /app.html 200
+ /login.html        /login.html 200
+ /profile.html      /profile.html 200
+ /reset-password.html /reset-password.html 200
+ /terms.html        /terms.html 200
+ /about.html        /about.html 200
+ /contact.html      /contact.html 200
+ /faq.html          /faq.html 200
+ /admin.html        /admin.html 200
+
+# Proxy API requests to your Railway backend
+ /api/* https://healtone-backend-production.up.railway.app/:splat 200
+
+# Fallback for any unknown path -> marketing/dashboard shell
+ /* /index.html 200
