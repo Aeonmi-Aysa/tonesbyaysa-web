@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -416,9 +416,14 @@
         <!-- LEFT SIDE - IMAGE -->
         <div class="image-side">
             <div class="image-wrapper">
-                <div class="image-placeholder">ðŸŽµ</div>
+                <div class="image-placeholder">🎵</div>
                 <div class="image-overlay"></div>
-                <div class="logo-badge">ðŸ’œ TONES</div>
+                <div class="logo-badge">
+                    <img src="assets/images/logo-tones-by-aysa.svg" 
+                         alt="TONES by Aysa" 
+                         style="height: 60px; width: auto;"
+                         onerror="this.parentElement.innerHTML='<span style=\"font-size: 24px; font-weight: 700;\">TONES</span>'">
+                </div>
             </div>
         </div>
 
@@ -464,10 +469,10 @@
 
                 <div class="oauth-buttons">
                     <button type="button" class="oauth-btn" id="googleSignin">
-                        <span style="font-size: 18px;">ðŸ”µ</span> Google
+                        <span style="font-size: 18px;">🔵</span> Google
                     </button>
                     <button type="button" class="oauth-btn" id="facebookSignin">
-                        <span style="font-size: 18px;">ðŸ‘</span> Facebook
+                        <span style="font-size: 18px;">👍</span> Facebook
                     </button>
                 </div>
             </div>
@@ -508,10 +513,10 @@
 
                 <div class="oauth-buttons">
                     <button type="button" class="oauth-btn" id="googleSignup">
-                        <span style="font-size: 18px;">ðŸ”µ</span> Google
+                        <span style="font-size: 18px;">🔵</span> Google
                     </button>
                     <button type="button" class="oauth-btn" id="facebookSignup">
-                        <span style="font-size: 18px;">ðŸ‘</span> Facebook
+                        <span style="font-size: 18px;">👍</span> Facebook
                     </button>
                 </div>
             </div>
@@ -534,16 +539,16 @@
                 const SUPABASE_ANON_KEY = window.ENV?.SUPABASE_ANON_KEY || 'your-anon-key-here';
 
                 if (!window.supabase) {
-                    console.error('âŒ Supabase SDK not loaded');
+                    console.error('❌ Supabase SDK not loaded');
                     return;
                 }
 
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('âœ“ Supabase initialized');
+                console.log('✓ Supabase initialized');
 
                 checkExistingSession();
             } catch (err) {
-                console.error('âŒ Supabase error:', err);
+                console.error('❌ Supabase error:', err);
             }
         }
 
@@ -602,7 +607,7 @@
                 
                 if (error) throw error;
                 
-                console.log('âœ“ Signed in:', email);
+                console.log('✓ Signed in:', email);
                 window.location.href = 'app.html';
                 
             } catch (err) {
@@ -646,10 +651,10 @@
                 
                 if (error) throw error;
                 
-                console.log('âœ“ Account created:', email);
+                console.log('✓ Account created:', email);
                 errorEl.classList.remove('error');
                 errorEl.classList.add('success', 'show');
-                errorEl.textContent = 'âœ“ Account created! Check your email to verify.';
+                errorEl.textContent = '✓ Account created! Check your email to verify.';
                 
                 setTimeout(() => {
                     window.location.href = 'app.html';
