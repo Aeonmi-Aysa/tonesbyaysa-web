@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>HealTone — Request Account / Data Deletion</title>
+    <style>
+        body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;background:#fff;color:#222;margin:0;padding:24px}
+        .wrap{max-width:760px;margin:0 auto}
+        h1{color:#be185d;border-bottom:2px solid #f3e6ec;padding-bottom:8px}
+        .card{background:#f8fafc;border-radius:10px;padding:18px;margin-top:18px;box-shadow:0 1px 4px rgba(16,24,40,.04)}
+        label{display:block;margin-top:12px;font-weight:600;color:#333}
+        input[type=text],input[type=email],select,textarea{width:100%;padding:10px;border:1px solid #e6e9ee;border-radius:6px;margin-top:6px;font-size:14px}
+        textarea{min-height:120px;resize:vertical}
+        .row{display:flex;gap:12px}
+        .row > *{flex:1}
+        .muted{color:#64748b;font-size:13px}
+        .actions{display:flex;gap:10px;margin-top:14px}
+        button{background:#be185d;color:#fff;border:0;padding:10px 14px;border-radius:8px;cursor:pointer}
+        .secondary{background:#eef2ff;color:#0f172a}
+        .note{margin-top:12px;background:#fff7ed;padding:10px;border:1px solid #fde3b7;border-radius:6px}
+        .small{font-size:13px;color:#475569}
+        .success{background:#ecfeff;border:1px solid #bbf7d0;padding:10px;border-radius:6px;margin-top:12px}
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <h1>Request Account / Data Deletion</h1>
+        <p class="muted">Use this form to request deletion of your HealTone account and/or your stored data. We'll send a prefilled request email to our team at origin@aeonmi.ai — this will open your default mail app so you can send it.</p>
+
+        <div class="card">
+            <form id="deletion-form">
+                <label for="name">Your name (optional)</label>
+                <input id="name" name="name" type="text" placeholder="Full name" />
+
+                <label for="email">Account email (required)</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" required />
+
+                <label for="request-type">What would you like to delete?</label>
+                <select id="request-type" name="request-type" required>
+                    <option value="delete-account">Delete account</option>
+                    <option value="delete-data">Delete data (keep account)</option>
+                    <option value="delete-both">Delete account & data</option>
+                </select>
+
+                <label for="message">Message (optional)</label>
+                <textarea id="message" name="message" placeholder="If you'd like, add a short reason or any details to help us verify and process your request."></textarea>
+
+                <label style="margin-top:10px"><input id="confirm" type="checkbox" required /> I confirm I am the owner of the account above.</label>
+
+                <div class="actions">
+                    <button id="send-btn" type="submit">Send Deletion Request</button>
+                    <button id="copy-btn" type="button" class="secondary">Copy Request Text</button>
+                </div>
+
+                <div id="status" class="small" aria-live="polite"></div>
+            </form>
+
+            <div class="note small">
+                <strong>How it works:</strong> Clicking "Send Deletion Request" will open your email client with a prefilled message addressed to origin@aeonmi.ai. If you don't have a mail client configured, use "Copy Request Text" and paste into your webmail to send to origin@aeonmi.ai.
+            </div>
+        </div>
+
+        <div class="small" style="margin-top:18px">We aim to acknowledge deletion requests within 30 days. If you need urgent help, you can also email origin@aeonmi.ai directly.</div>
+    </div>
+
+    <script>
+        (function(){
+            const form = document.getElementById('deletion-form');
+            const status = document.getElementById('status');
+            const copyBtn = document.getElementById('copy-btn');
+
+            function buildRequestText(data) {
+                const lines = [];
+                lines.push('HealTone Deletion Request');
+                lines.push('---');
+                lines.push('Name: ' + (data.name || '-'));
+                lines.push('Email: ' + data.email);
+                lines.push('Request: ' + data.requestType);
+                lines.push('Message:');
+                lines.push(data.message || '-');
+                lines.push('---');
+                lines.push('Page: ' + location.href);
+                lines.push('Time: ' + new Date().toISOString());
+                lines.push('User-Agent: ' + navigator.userAgent);
+                return lines.join('\n');
+            }
+
+            form.addEventListener('submit', function(evt){
+                evt.preventDefault();
+                status.textContent = '';
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const requestType = document.getElementById('request-type').value;
+                const message = document.getElementById('message').value.trim();
+                const confirm = document.getElementById('confirm').checked;
+                if(!email){ status.textContent = 'Please enter your account email.'; return; }
+                if(!confirm){ status.textContent = 'Please confirm you are the account owner.'; return; }
+
+                const data = { name, email, requestType, message };
+                const subject = 'HealTone Deletion Request: ' + requestType + ' — ' + email;
+                const body = buildRequestText(data);
+                const mailto = 'mailto:origin@aeonmi.ai?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+                // Try to open default mail client
+                try {
+                    window.location.href = mailto;
+                    status.innerHTML = '<span class="success">Opening your email client. Please send the message to complete the request.</span>';
+                } catch (err) {
+                    status.textContent = 'Unable to open email client. Use "Copy Request Text" to manually send to origin@aeonmi.ai.';
+                }
+            });
+
+            copyBtn.addEventListener('click', function(){
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const requestType = document.getElementById('request-type').value;
+                const message = document.getElementById('message').value.trim();
+                if(!email){ status.textContent = 'Please enter your account email before copying.'; return; }
+                const text = buildRequestText({ name, email, requestType, message });
+                navigator.clipboard.writeText(text).then(()=>{
+                    status.textContent = 'Request text copied to clipboard. Paste in an email to origin@aeonmi.ai.';
+                }).catch(()=>{
+                    status.textContent = 'Could not copy to clipboard — please select and copy the text below manually:\n' + text;
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
