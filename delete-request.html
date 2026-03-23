@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>HealTone — Request Account / Data Deletion</title>
+    <title>Tones by Aysa — Request Account / Data Deletion</title>
     <style>
         body{font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;background:#fff;color:#222;margin:0;padding:24px}
         .wrap{max-width:760px;margin:0 auto}
@@ -26,7 +26,7 @@
 <body>
     <div class="wrap">
         <h1>Request Account / Data Deletion</h1>
-        <p class="muted">Use this form to request deletion of your HealTone account and/or your stored data. We'll send a prefilled request email to our team at origin@aeonmi.ai — this will open your default mail app so you can send it.</p>
+        <p class="muted">Use this form to request deletion of your Tones by Aysa account and/or your stored data. We'll send a prefilled request email to our team at origin@aeonmi.ai — this will open your default mail app so you can send it.</p>
 
         <div class="card">
             <form id="deletion-form">
@@ -72,7 +72,7 @@
 
             function buildRequestText(data) {
                 const lines = [];
-                lines.push('HealTone Deletion Request');
+                lines.push('Tones by Aysa Deletion Request');
                 lines.push('---');
                 lines.push('Name: ' + (data.name || '-'));
                 lines.push('Email: ' + data.email);
@@ -98,7 +98,7 @@
                 if(!confirm){ status.textContent = 'Please confirm you are the account owner.'; return; }
 
                 const data = { name, email, requestType, message };
-                const subject = 'HealTone Deletion Request: ' + requestType + ' — ' + email;
+                const subject = 'Tones by Aysa Deletion Request: ' + requestType + ' — ' + email;
                 const body = buildRequestText(data);
                 const mailto = 'mailto:origin@aeonmi.ai?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
